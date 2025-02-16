@@ -1,0 +1,151 @@
+<!-- frontend/admin/pages/categories/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Gestion des Catégories</title>
+    <link rel="stylesheet" href="../../static/css/admin.css">
+    <link rel="stylesheet" href="../../static/css/forms.css">
+    
+    <!-- Vérification admin -->
+    <script type="module">
+        import { session } from '../../../static/js/session.js';
+        const userData = session.getUserData();
+        if (!userData?.is_admin) {
+            window.location.href = '/login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Menu latéral admin -->
+    <aside class="admin-sidebar">
+        <!-- ... Menu identique aux autres pages ... -->
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <!-- En-tête -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h2>Gestion des Catégories</h2>
+                <button
+                    class="btn btn-primary"
+                    onclick="categoriesManager.showCreateModal()"
+                >
+                    Nouvelle Catégorie
+                </button>
+            </div>
+        </header>
+
+        <!-- Liste des catégories -->
+        <section class="categories-section">
+            <div class="categories-tree" id="categories-tree">
+                <!-- Arborescence des catégories injectée ici -->
+            </div>
+        </section>
+
+        <!-- Modal de création/édition -->
+        <div class="modal" id="category-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Nouvelle Catégorie</h3>
+                    <button
+                        class="close-btn"
+                        onclick="categoriesManager.hideModal()"
+                    >&times;</button>
+                </div>
+                
+                <form id="category-form" class="form-section" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="name">Nom de la catégorie*</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="parent_id">Catégorie parente</label>
+                        <select id="parent_id" name="parent_id">
+                            <option value="">Aucune (catégorie principale)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Image de la catégorie</label>
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            accept="image/*"
+                        >
+                        <div id="current-image" class="current-image" style="display: none;">
+                            <img src="" alt="Image actuelle">
+                            <button
+                                type="button"
+                                class="btn btn-danger"
+                                onclick="categoriesManager.removeImage()"
+                            >
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onclick="categoriesManager.hideModal()"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            onclick="categoriesManager.saveCategory()"
+                        >
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Templates -->
+    <template id="category-item-template">
+        <div class="category-item">
+            <div class="category-content">
+                <button class="expand-btn">
+                    <i class="icon chevron-icon"></i>
+                </button>
+                <span class="category-name"></span>
+                <div class="category-actions">
+                    <button class="btn btn-icon edit-btn">
+                        <i class="icon edit-icon"></i>
+                    </button>
+                    <button class="btn btn-icon delete-btn">
+                        <i class="icon delete-icon"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="subcategories"></div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script type="module" src="../../static/js/categories.js"></script>
+</body>
+</html>

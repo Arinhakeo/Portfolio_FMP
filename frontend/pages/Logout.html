@@ -1,0 +1,33 @@
+<!-- frontend/pages/logout.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Déconnexion</title>
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/logout.css">
+
+    <script type="module">
+        import { session } from '../static/js/session.js';
+        
+        // Déconnexion immédiate
+        session.handleLogout();
+    </script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box logout-box">
+            <div class="logout-animation">
+                <!-- Animation de déconnexion -->
+                <svg class="logout-icon" viewBox="0 0 24 24">
+                    <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"/>
+                </svg>
+            </div>
+            <h2>Déconnexion en cours...</h2>
+            <p>Vous allez être redirigé vers la page d'accueil.</p>
+        </div>
+    </div>
+</body>
+</html>

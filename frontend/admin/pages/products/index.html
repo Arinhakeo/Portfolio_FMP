@@ -1,0 +1,141 @@
+<!-- frontend/admin/pages/products/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Gestion des Produits</title>
+    <link rel="stylesheet" href="../../static/css/admin.css">
+    <link rel="stylesheet" href="../../static/css/forms.css">
+    
+    <!-- Vérification des droits admin -->
+    <script type="module">
+        import { session } from '../../../static/js/session.js';
+        
+        // Redirection si non admin
+        const userData = session.getUserData();
+        if (!userData?.is_admin) {
+            window.location.href = '/login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Menu latéral admin -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <h1>FMP Admin</h1>
+        </div>
+        <nav class="admin-nav">
+            <ul>
+                <li>
+                    <a href="../dashboard.html">
+                        <i class="icon dashboard-icon"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="./index.html" class="active">
+                        <i class="icon products-icon"></i>
+                        Produits
+                    </a>
+                </li>
+                <li>
+                    <a href="../categories/index.html">
+                        <i class="icon categories-icon"></i>
+                        Catégories
+                    </a>
+                </li>
+                <li>
+                    <a href="../brands/index.html">
+                        <i class="icon brands-icon"></i>
+                        Marques
+                    </a>
+                </li>
+                <li>
+                    <a href="../orders/index.html">
+                        <i class="icon orders-icon"></i>
+                        Commandes
+                    </a>
+                </li>
+                <li>
+                    <a href="../users/index.html">
+                        <i class="icon users-icon"></i>
+                        Utilisateurs
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <!-- En-tête -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h2>Gestion des Produits</h2>
+                <a href="./create.html" class="btn btn-primary">
+                    Nouveau Produit
+                </a>
+            </div>
+        </header>
+
+        <!-- Filtres et recherche -->
+        <section class="filters-section">
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Rechercher un produit..."
+                >
+            </div>
+            
+            <div class="filters">
+                <select id="category-filter">
+                    <option value="">Toutes les catégories</option>
+                </select>
+                
+                <select id="brand-filter">
+                    <option value="">Toutes les marques</option>
+                </select>
+                
+                <select id="stock-filter">
+                    <option value="">Tous les stocks</option>
+                    <option value="in_stock">En stock</option>
+                    <option value="low_stock">Stock bas</option>
+                    <option value="out_of_stock">Rupture de stock</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Liste des produits -->
+        <section class="products-list">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>SKU</th>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Marque</th>
+                        <th>Prix</th>
+                        <th>Stock</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-table-body">
+                    <!-- Les produits seront injectés ici -->
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- La pagination sera injectée ici -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="../../static/js/products.js"></script>
+</body>
+</html>

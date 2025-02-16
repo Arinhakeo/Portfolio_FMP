@@ -1,0 +1,54 @@
+/* frontend/static/css/logout.css */
+
+.logout-box {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.logout-animation {
+    margin-bottom: 2rem;
+}
+
+.logout-icon {
+    width: 64px;
+    height: 64px;
+    fill: var(--primary-color);
+    animation: rotate-out 0.8s ease-in-out forwards;
+}
+
+@keyframes rotate-out {
+    0% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.logout-box h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.logout-box p {
+    color: #666;
+}
+
+/* Animation de chargement */
+.loading-dots:after {
+    content: '.';
+    animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60% { content: '...'; }
+    80%, 100% { content: ''; }
+}

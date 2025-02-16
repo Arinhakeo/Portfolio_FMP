@@ -1,0 +1,68 @@
+<!-- frontend/pages/login.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Connexion</title>
+    <!-- Styles -->
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+
+    <script type="module">
+        import { session } from '../static/js/session.js';
+        
+        // Vérification de l'authentification
+        if (!session.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+    </script>
+    
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Connexion</h2>
+            <!-- Formulaire de connexion -->
+            <form id="login-form" class="auth-form">
+                <!-- Message d'erreur -->
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <!-- Mot de passe -->
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <!-- Options -->
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Se souvenir de moi
+                    </label>
+                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                </div>
+                
+                <!-- Bouton de connexion -->
+                <button type="submit" class="auth-button">Se connecter</button>
+            </form>
+            
+            <!-- Liens -->
+            <div class="auth-links">
+                <p>Pas encore de compte ? <a href="register.html">S'inscrire</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="../static/js/auth.js"></script>
+</body>
+</html>

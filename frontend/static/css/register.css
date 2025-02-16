@@ -1,0 +1,103 @@
+/* frontend/static/css/register.css */
+
+/* Styles spécifiques à la page d'inscription */
+.register-box {
+    max-width: 500px; /* Plus large que la page de connexion */
+}
+
+/* Style pour la mise en page sur deux colonnes */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Groupe de mot de passe avec icône */
+.password-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Indicateur de force du mot de passe */
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.strength-meter {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.meter-section {
+    height: 4px;
+    flex: 1;
+    background: #ddd;
+    border-radius: 2px;
+    transition: background-color 0.3s;
+}
+
+/* Classes de force du mot de passe */
+.weak .meter-section:nth-child(1) {
+    background: #e74c3c;
+}
+
+.medium .meter-section:nth-child(1),
+.medium .meter-section:nth-child(2) {
+    background: #f39c12;
+}
+
+.strong .meter-section:nth-child(1),
+.strong .meter-section:nth-child(2),
+.strong .meter-section:nth-child(3) {
+    background: #3498db;
+}
+
+.very-strong .meter-section {
+    background: #2ecc71;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Style des cases à cocher */
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+}
+
+/* Messages d'aide */
+.form-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .register-box {
+        padding: 1.5rem;
+    }
+}

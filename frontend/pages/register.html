@@ -1,0 +1,148 @@
+<!-- frontend/pages/register.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Inscription</title>
+    <!-- Import des styles -->
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/register.css">
+
+    <script type="module">
+        import { session } from '../static/js/session.js';
+        
+        // Vérification de l'authentification
+        if (!session.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+    </script>
+
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box register-box">
+            <!-- En-tête -->
+            <h2>Créer un compte</h2>
+            <p class="auth-subtitle">Rejoignez FMP pour accéder à nos services</p>
+
+            <!-- Formulaire d'inscription -->
+            <form id="register-form" class="auth-form">
+                <!-- Message d'erreur -->
+                <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <!-- Nom et Prénom sur la même ligne -->
+                <div class="form-row">
+                    <!-- Prénom -->
+                    <div class="form-group">
+                        <label for="firstname">Prénom</label>
+                        <input
+                            type="text"
+                            id="firstname"
+                            name="firstname"
+                            required
+                            autocomplete="given-name">
+                        <small class="form-hint">2 caractères minimum</small>
+                    </div>
+
+                    <!-- Nom -->
+                    <div class="form-group">
+                        <label for="lastname">Nom</label>
+                        <input
+                            type="text"
+                            id="lastname"
+                            name="lastname"
+                            required
+                            autocomplete="family-name">
+                        <small class="form-hint">2 caractères minimum</small>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        autocomplete="email">
+                    <small class="form-hint">Sera utilisé pour la connexion</small>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="password-input-group">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required>
+                        <button type="button" class="toggle-password">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                    <!-- Indicateur de force du mot de passe -->
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="meter-section"></div>
+                            <div class="meter-section"></div>
+                            <div class="meter-section"></div>
+                            <div class="meter-section"></div>
+                        </div>
+                        <span class="strength-text">Force du mot de passe</span>
+                    </div>
+                </div>
+
+                <!-- Confirmation du mot de passe -->
+                <div class="form-group">
+                    <label for="password-confirm">Confirmez le mot de passe</label>
+                    <input
+                        type="password"
+                        id="password-confirm"
+                        name="password-confirm"
+                        required>
+                </div>
+
+                <!-- Conditions d'utilisation -->
+                <div class="form-group terms">
+                    <label class="checkbox-label">
+                        <input
+                            type="checkbox"
+                            name="terms"
+                            required>
+                        <span>J'accepte les <a href="/terms.html">conditions d'utilisation</a></span>
+                    </label>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="form-group terms">
+                    <label class="checkbox-label">
+                        <input
+                            type="checkbox"
+                            name="newsletter">
+                        <span>Je souhaite recevoir la newsletter</span>
+                    </label>
+                </div>
+
+                <!-- Bouton d'inscription -->
+                <button type="submit" class="auth-button">
+                    Créer mon compte
+                </button>
+            </form>
+
+            <!-- Liens -->
+            <div class="auth-links">
+                <p>Déjà un compte ? <a href="login.html">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="../static/js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!-- frontend/admin/pages/products/edit.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Édition Produit</title>
+    <link rel="stylesheet" href="../../static/css/admin.css">
+    <link rel="stylesheet" href="../../static/css/forms.css">
+    
+    <!-- Vérification admin -->
+    <script type="module">
+        import { session } from '../../../static/js/session.js';
+        const userData = session.getUserData();
+        if (!userData?.is_admin) {
+            window.location.href = '/login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Menu latéral admin (comme dans index.html) -->
+    <aside class="admin-sidebar">
+        <!-- ... contenu du menu ... -->
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <!-- En-tête -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h2 id="page-title">Nouveau Produit</h2>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="history.back()">
+                        Annuler
+                    </button>
+                    <button class="btn btn-primary" onclick="productEditor.saveProduct()">
+                        Enregistrer
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Formulaire principal -->
+        <form id="product-form" class="form-section" onsubmit="return false;">
+            <!-- Informations de base -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sku">Référence (SKU)*</label>
+                    <input
+                        type="text"
+                        id="sku"
+                        name="sku"
+                        required
+                        placeholder="Ex: HP-LAS-001"
+                    >
+                    <small class="form-hint">
+                        La référence doit être unique
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Nom du produit*</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        placeholder="Ex: Cartouche HP LaserJet Pro"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category_id">Catégorie*</label>
+                    <select id="category_id" name="category_id" required>
+                        <option value="">Sélectionner une catégorie</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="brand_id">Marque*</label>
+                    <select id="brand_id" name="brand_id" required>
+                        <option value="">Sélectionner une marque</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Prix (€)*</label>
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        step="0.01"
+                        min="0"
+                        required
+                        placeholder="0.00"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="stock_quantity">Quantité en stock*</label>
+                    <input
+                        type="number"
+                        id="stock_quantity"
+                        name="stock_quantity"
+                        min="0"
+                        required
+                        placeholder="0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="min_stock_level">Niveau minimum de stock</label>
+                    <input
+                        type="number"
+                        id="min_stock_level"
+                        name="min_stock_level"
+                        min="0"
+                        placeholder="5"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input
+                            type="checkbox"
+                            id="is_active"
+                            name="is_active"
+                            checked
+                        >
+                        Produit actif
+                    </label>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="short_description">Description courte</label>
+                <input
+                    type="text"
+                    id="short_description"
+                    name="short_description"
+                    maxlength="500"
+                    placeholder="Brève description du produit"
+                >
+                <small class="form-hint">
+                    Maximum 500 caractères
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description détaillée</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="6"
+                    placeholder="Description complète du produit"
+                ></textarea>
+            </div>
+        </form>
+
+        <!-- Gestion des images -->
+        <section class="form-section">
+            <h3>Images du produit</h3>
+            
+            <!-- Zone de drop des images -->
+            <div
+                id="image-dropzone"
+                class="image-dropzone"
+                ondrop="productEditor.handleImageDrop(event)"
+                ondragover="productEditor.handleDragOver(event)"
+                ondragleave="productEditor.handleDragLeave(event)"
+            >
+                <div class="dropzone-content">
+                    <i class="icon upload-icon"></i>
+                    <p>Glissez des images ici ou</p>
+                    <input
+                        type="file"
+                        id="image-input"
+                        multiple
+                        accept="image/*"
+                        style="display: none;"
+                        onchange="productEditor.handleImageSelect(event)"
+                    >
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="document.getElementById('image-input').click()"
+                    >
+                        Parcourir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Liste des images -->
+            <div id="product-images" class="product-images">
+                <!-- Les images seront injectées ici -->
+            </div>
+        </section>
+
+        <!-- Spécifications -->
+        <section class="form-section">
+            <h3>Spécifications techniques</h3>
+            
+            <div id="specifications-list">
+                <!-- Les spécifications seront injectées ici -->
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="productEditor.addSpecification()"
+            >
+                Ajouter une spécification
+            </button>
+        </section>
+    </main>
+
+    <!-- Template pour les spécifications -->
+    <template id="specification-template">
+        <div class="specification-item">
+            <div class="form-grid">
+                <div class="form-group">
+                    <input
+                        type="text"
+                        class="spec-name"
+                        placeholder="Nom de la spécification"
+                    >
+                </div>
+                <div class="form-group">
+                    <input
+                        type="text"
+                        class="spec-value"
+                        placeholder="Valeur"
+                    >
+                </div>
+                <div class="form-group">
+                    <input
+                        type="text"
+                        class="spec-unit"
+                        placeholder="Unité (optionnel)"
+                    >
+                </div>
+                <div class="form-group">
+                    <button
+                        type="button"
+                        class="btn btn-icon delete-spec"
+                        onclick="productEditor.removeSpecification(this)"
+                    >
+                        <i class="icon delete-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script type="module" src="../../static/js/product-editor.js"></script>
+</body>
+</html>

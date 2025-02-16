@@ -1,0 +1,72 @@
+<!-- frontend/pages/verify-email.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Vérification Email</title>
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/verify.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box verify-box">
+            <h2>Vérification de votre email</h2>
+            
+            <!-- État initial - Email envoyé -->
+            <div id="verification-pending" class="verification-state">
+                <div class="icon-container">
+                    <img src="../static/images/email-sent.svg" alt="Email envoyé">
+                </div>
+                <p class="verify-message">
+                    Un email de vérification a été envoyé à
+                    <strong id="user-email">votre adresse email</strong>
+                </p>
+                <p class="verify-instructions">
+                    Veuillez cliquer sur le lien dans l'email pour activer votre compte.
+                </p>
+                
+                <!-- Minuteur pour le renvoi -->
+                <div class="resend-timer">
+                    <p>Vous pouvez demander un nouvel email dans</p>
+                    <span id="timer">02:00</span>
+                </div>
+                
+                <!-- Bouton de renvoi (initialement désactivé) -->
+                <button id="resend-button" class="secondary-button" disabled>
+                    Renvoyer l'email
+                </button>
+            </div>
+
+            <!-- État de succès -->
+            <div id="verification-success" class="verification-state" style="display: none;">
+                <div class="icon-container success">
+                    <img src="../static/images/email-verified.svg" alt="Email vérifié">
+                </div>
+                <h3>Email vérifié avec succès !</h3>
+                <p>Votre compte est maintenant activé.</p>
+                <a href="/login.html" class="auth-button">
+                    Se connecter
+                </a>
+            </div>
+
+            <!-- État d'erreur -->
+            <div id="verification-error" class="verification-state" style="display: none;">
+                <div class="icon-container error">
+                    <img src="../static/images/error.svg" alt="Erreur">
+                </div>
+                <h3>Une erreur est survenue</h3>
+                <p id="error-message">Le lien de vérification est invalide ou a expiré.</p>
+                <button id="request-new-link" class="auth-button">
+                    Demander un nouveau lien
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+    
+    <script src="../static/js/verify-email.js"></script>
+</body>
+</html>

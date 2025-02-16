@@ -1,0 +1,212 @@
+<!-- frontend/pages/product.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Détail Produit</title>
+    <meta name="description" content="Description détaillée de la cartouche d'imprimante.">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/product-detail.css">
+</head>
+<body>
+    <!-- En-tête (identique aux autres pages) -->
+    <header class="main-header">
+        <!-- ... contenu de l'en-tête ... -->
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="product-detail-page">
+        <div class="container">
+            <!-- Fil d'Ariane -->
+            <nav class="breadcrumb">
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/products.html">Cartouches</a></li>
+                    <li><a href="#" id="category-link">Catégorie</a></li>
+                    <li id="product-name">Nom du produit</li>
+                </ul>
+            </nav>
+
+            <!-- Section principale -->
+            <div class="product-main">
+                <!-- Galerie d'images -->
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img src="" alt="" id="main-product-image">
+                        <button class="zoom-btn">
+                            <i class="icon zoom-icon"></i>
+                        </button>
+                    </div>
+                    <div class="thumbnail-list" id="image-thumbnails">
+                        <!-- Les miniatures seront injectées ici -->
+                    </div>
+                </div>
+
+                <!-- Informations produit -->
+                <div class="product-info">
+                    <h1 id="product-title">Nom du produit</h1>
+                    
+                    <!-- Marque et Référence -->
+                    <div class="product-meta">
+                        <div class="brand">
+                            <span>Marque :</span>
+                            <a href="#" id="brand-link">Nom de la marque</a>
+                        </div>
+                        <div class="reference">
+                            <span>Référence :</span>
+                            <span id="product-reference">REF123</span>
+                        </div>
+                    </div>
+
+                    <!-- Prix et stock -->
+                    <div class="product-purchase">
+                        <div class="price-block">
+                            <div class="current-price">
+                                <span id="product-price">0.00</span> €
+                            </div>
+                            <div class="original-price" id="original-price-block" style="display: none;">
+                                <span id="original-price">0.00</span> €
+                            </div>
+                            <div class="discount-tag" id="discount-tag" style="display: none;">
+                                -<span id="discount-value">0</span>%
+                            </div>
+                        </div>
+
+                        <div class="stock-info" id="stock-info">
+                            <!-- Le statut du stock sera injecté ici -->
+                        </div>
+
+                        <!-- Options d'achat -->
+                        <div class="purchase-options">
+                            <div class="quantity-selector">
+                                <button 
+                                    class="quantity-btn minus"
+                                    onclick="productDetail.decreaseQuantity()"
+                                >-</button>
+                                <input 
+                                    type="number" 
+                                    id="quantity" 
+                                    value="1" 
+                                    min="1"
+                                    onchange="productDetail.validateQuantity()"
+                                >
+                                <button 
+                                    class="quantity-btn plus"
+                                    onclick="productDetail.increaseQuantity()"
+                                >+</button>
+                            </div>
+
+                            <button 
+                                class="add-to-cart-btn" 
+                                id="add-to-cart-btn"
+                                onclick="productDetail.addToCart()"
+                            >
+                                Ajouter au panier
+                            </button>
+                        </div>
+
+                        <!-- Avantages -->
+                        <div class="product-benefits">
+                            <div class="benefit">
+                                <i class="icon truck-icon"></i>
+                                <span>Livraison gratuite dès 49€</span>
+                            </div>
+                            <div class="benefit">
+                                <i class="icon shield-icon"></i>
+                                <span>Garantie 2 ans</span>
+                            </div>
+                            <div class="benefit">
+                                <i class="icon return-icon"></i>
+                                <span>Retour gratuit sous 30 jours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglets d'information -->
+            <div class="product-tabs">
+                <div class="tabs-header">
+                    <button 
+                        class="tab-btn active" 
+                        data-tab="description"
+                        onclick="productDetail.switchTab('description')"
+                    >
+                        Description
+                    </button>
+                    <button 
+                        class="tab-btn" 
+                        data-tab="specifications"
+                        onclick="productDetail.switchTab('specifications')"
+                    >
+                        Caractéristiques
+                    </button>
+                    <button 
+                        class="tab-btn" 
+                        data-tab="compatibility"
+                        onclick="productDetail.switchTab('compatibility')"
+                    >
+                        Compatibilité
+                    </button>
+                </div>
+
+                <div class="tabs-content">
+                    <!-- Description -->
+                    <div id="description" class="tab-content active">
+                        <div class="description-content">
+                            <!-- La description sera injectée ici -->
+                        </div>
+                    </div>
+
+                    <!-- Caractéristiques -->
+                    <div id="specifications" class="tab-content">
+                        <table class="specs-table">
+                            <tbody id="specs-list">
+                                <!-- Les spécifications seront injectées ici -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Compatibilité -->
+                    <div id="compatibility" class="tab-content">
+                        <div class="compatibility-list" id="compatibility-list">
+                            <!-- La liste de compatibilité sera injectée ici -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produits similaires -->
+            <section class="similar-products">
+                <h2>Produits similaires</h2>
+                <div class="products-grid" id="similar-products">
+                    <!-- Les produits similaires seront injectés ici -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Modal de zoom -->
+        <div class="zoom-modal" id="zoom-modal">
+            <div class="zoom-content">
+                <button class="close-zoom">×</button>
+                <img src="" alt="" id="zoomed-image">
+                <div class="zoom-thumbnails" id="zoom-thumbnails">
+                    <!-- Les miniatures de zoom seront injectées ici -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pied de page (identique aux autres pages) -->
+    <footer class="main-footer">
+        <!-- ... contenu du pied de page ... -->
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="../static/js/main.js"></script>
+    <script type="module" src="../static/js/product-detail.js"></script>
+</body>
+</html>
