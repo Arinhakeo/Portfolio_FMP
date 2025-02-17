@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\Projet_Portfolio\FMP_DATABASE\venv
+set VIRTUAL_ENV=D:\FMP_DB\Portfolio_FMP\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

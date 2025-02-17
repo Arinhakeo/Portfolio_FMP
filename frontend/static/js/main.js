@@ -3,6 +3,8 @@
 import { session } from './session.js';
 import { notifications } from './notifications.js';
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 /**
  * Gestionnaire principal du site
  */
@@ -53,9 +55,9 @@ class MainManager {
         const userData = session.getUserData();
 
         // Mise à jour des liens de connexion/inscription
-        document.getElementById('login-link').style.display = 
+        document.getElementById('login-link').style.display =
             isLoggedIn ? 'none' : 'block';
-        document.getElementById('register-link').style.display = 
+        document.getElementById('register-link').style.display =
             isLoggedIn ? 'none' : 'block';
 
         // Si connecté, ajouter le menu utilisateur
@@ -92,7 +94,7 @@ class MainManager {
      */
     async loadCategories() {
         try {
-            const response = await fetch('/api/products/categories');
+            const response = await fetch(`${API_BASE_URL}/products/categories`);
             const categories = await response.json();
             
             const menu = document.getElementById('category-menu');

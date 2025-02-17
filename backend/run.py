@@ -7,6 +7,9 @@ Lance le serveur de développement.
 
 import os
 from app import create_app
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Création de l'application
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -23,3 +26,5 @@ if __name__ == '__main__':
         port=port,
         debug=debug
     )
+    
+    print("SECRET_KEY:", os.getenv("SECRET_KEY"))

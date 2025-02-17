@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask import render_template
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -16,7 +17,7 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 @auth_bp.route('/register', methods=['POST'])
 def register():
     """Enregistrement d'un nouvel utilisateur.
-    
+    pip install em
     Attends un JSON avec:
         - email: Email de l'utilisateur
         - password: Mot de passe

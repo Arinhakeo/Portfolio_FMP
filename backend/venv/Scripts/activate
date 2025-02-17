@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="D:\Projet_Portfolio\FMP_DATABASE\backend\venv"
+VIRTUAL_ENV="D:\FMP_DB\Portfolio_FMP\backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
