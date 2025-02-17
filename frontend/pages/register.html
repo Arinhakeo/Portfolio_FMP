@@ -10,15 +10,6 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/register.css">
 
-    <script type="module">
-        import { session } from '../static/js/session.js';
-        
-        // Vérification de l'authentification
-        if (!session.isAuthenticated()) {
-            window.location.href = '/login.html';
-        }
-    </script>
-
 </head>
 <body>
     <div class="auth-container">

@@ -24,6 +24,8 @@
     background: var(--light-gray);
     padding: 0.5rem 0;
     font-size: 0.9rem;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .top-bar .container {
@@ -82,6 +84,7 @@
 .search-bar {
     max-width: 600px;
     width: 100%;
+
 }
 
 .search-bar form {
@@ -118,6 +121,12 @@
 }
 
 /* Widget Panier */
+
+.caddie-icon {
+    height: 50px;
+    width: auto;
+}
+
 .cart-widget {
     position: relative;
 }
