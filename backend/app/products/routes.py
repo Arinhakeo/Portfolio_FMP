@@ -22,6 +22,19 @@ brands_schema = BrandSchema(many=True)
 # =========================================
 # Routes pour les produits
 # =========================================
+@products_bp.route('/categories', methods=['GET'])
+def get_categories():
+    # Retourner vos catégories
+    return jsonify([
+        {"id": 1, "name": "Écologique", "slug": "ecologique"},
+        {"id": 2, "name": "Originale", "slug": "originale"},
+        {"id": 3, "name": "Compatible", "slug": "compatible"}
+    ])
+
+@products_bp.route('/categories/<slug>', methods=['GET'])
+def get_category(slug):
+    # Logique pour afficher les produits d'une catégorie
+    pass
 
 @products_bp.route('/', methods=['GET'])
 def get_products():

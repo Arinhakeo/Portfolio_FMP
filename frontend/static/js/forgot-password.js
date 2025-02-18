@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Affichage du message de succès
-                showStatus('success', 
+                showStatus('success',
                     'Un email contenant les instructions de réinitialisation ' +
                     'vous a été envoyé. Vérifiez votre boîte de réception.'
                 );

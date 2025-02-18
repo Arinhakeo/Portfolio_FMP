@@ -1,40 +1,52 @@
+// frontend/static/js/login.js
 import { session } from './session.js';
 import { notifications } from './notifications.js';
 
-async function handleLogin(credentials) {
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(credentials)
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const credentials = {
+                email: this.email.value,
+                password: this.password.value
+            };
 
-        const data = await response.json();
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
 
-        if (!response.ok) {
-            throw new Error(data.error);
-        }
+                const data = await response.json();
 
-        // Gestion de la connexion
-        session.handleLogin(data);
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
 
-        // Notification de succès
-        notifications.create({
-            type: 'success',
-            title: 'Connexion réussie',
-            message: `Bienvenue, ${data.user.firstname}!`
-        });
+                // Sauvegarder le token et les infos utilisateur
+                localStorage.setItem('jwt_token', data.token);
+                localStorage.setItem('user_info', JSON.stringify(data.user));
 
-        // Redirection
-        window.location.href = '/';
+                // Redirection basée sur le rôle
+                if (data.user.is_admin) {
+                    window.location.href = '/admin/pages/products/index.html'; // Interface admin
+                } else {
+                    window.location.href = '/'; // Page d'accueil normale
+                }
 
-    } catch (error) {
-        notifications.create({
-            type: 'error',
-            title: 'Erreur de connexion',
-            message: error.message
+            } catch (error) {
+                const errorMessage = document.getElementById('error-message');
+                if (errorMessage) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            }
         });
     }
-}
+});

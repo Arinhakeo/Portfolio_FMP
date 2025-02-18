@@ -18,6 +18,19 @@
 <body>
     <!-- En-tête -->
     <header class="main-header">
+
+                    <!-- Cette partie sera remplie dynamiquement par JavaScript -->
+                </ul>
+            </nav>
+        
+        <!-- À la fin du fichier -->
+        <script src="/static/js/auth.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                checkLoginStatus();
+            });
+        </script>
+
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="container">
@@ -293,5 +306,11 @@
     <script type="module" src="/static/js/services/cart.service.js"></script>
     <script type="module" src="/static/js/router.js"></script>
     <script type="module" src="/static/js/main.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+</script>
 </body>
 </html>

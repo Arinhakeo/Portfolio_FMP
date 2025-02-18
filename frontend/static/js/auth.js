@@ -87,6 +87,59 @@ function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+function checkLoginStatus() {
+    const token = localStorage.getItem('jwt_token');
+    const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (token) {
+        // L'utilisateur est connecté
+        if (userInfo.is_admin) {
+            // Interface pour admin
+            navLinks.innerHTML = `
+                <li class="nav-item">
+                    <span class="admin-badge">Admin</span>
+                    <a href="/admin/pages/products/index.html" class="nav-link">
+                        <img src="../static/images/icones/admin-icon.png" alt="Admin" class="admin-icon">
+                        Interface Admin
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link user-profile">
+                        <img src="../static/images/icones/user.png" alt="Profile" class="profile-icon">
+                        ${userInfo.firstname || 'Profile'}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link logout">Déconnexion</a>
+                </li>
+            `;
+        } else {
+            // Interface utilisateur normal
+            navLinks.innerHTML = `
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link user-profile">
+                        <img src="../static/images/icones/user.png" alt="Profile" class="profile-icon">
+                        ${userInfo.firstname || 'Profile'}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link logout">Déconnexion</a>
+                </li>
+            `;
+        }
+    } else {
+        // L'utilisateur n'est pas connecté
+        navLinks.innerHTML = `
+            <li class="nav-item">
+                <a href="/login" class="nav-link">Connexion</a>
+            </li>
+            <li class="nav-item">
+                <a href="/register" class="nav-link">S'inscrire</a>
+            </li>
+        `;
+    }
+}
 
 /**
  * Affiche un message d'erreur

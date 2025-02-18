@@ -8,6 +8,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="../static/css/main.css">
     <link rel="stylesheet" href="../static/css/auth.css">
+
     
 </head>
 <body>
@@ -37,7 +38,7 @@
                         <input type="checkbox" name="remember">
                         Se souvenir de moi
                     </label>
-                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                    <a href="/forgot-password" class="forgot-password">Mot de passe oublié ?</a>
                 </div>
                 
                 <!-- Bouton de connexion -->
@@ -46,7 +47,7 @@
             
             <!-- Liens -->
             <div class="auth-links">
-                <p>Pas encore de compte ? <a href="register.html">S'inscrire</a></p>
+                <p>Pas encore de compte ? <a href="./register">S'inscrire</a></p>
             </div>
         </div>
     </div>
@@ -55,5 +56,8 @@
 
     <!-- Scripts -->
     <script src="../static/js/auth.js"></script>
+    <script type="module" src="../static/js/login.js"></script>
+    <script type="module" src="../static/js/session.js"></script>
+    <script type="module" src="../static/js/notifications.js"></script>
 </body>
 </html>

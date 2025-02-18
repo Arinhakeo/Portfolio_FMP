@@ -325,15 +325,20 @@
 
 /* Catégories Populaires */
 .popular-categories {
+    font-size: 3rem;
+    font-weight: 600;
     padding : 0 20px;
     background: var(--light-gray);
 }
 
 .section-title {
-    padding: 0;
+    margin-top: 2rem;
     text-align: center;
+    text-size-adjust: 1.5rem;
     margin-bottom: 2rem;
     color: var(--text-color);
+    font-size: 3rem;
+    font-weight: 600;
 }
 
 .category-grid {
@@ -350,13 +355,13 @@
     padding: 2rem 0;
 }
 
+/* Style de base pour les cartes de catégorie */
 .category-card {
     position: relative;
     height: 300px;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Transition douce */
     cursor: pointer;
 }
 
@@ -368,11 +373,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.7;
-}
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0.8;
 }
 /* Overlay plus foncé pour améliorer la lisibilité */
 .category-card::after {
@@ -382,7 +383,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Overlay noir semi-transparent */
+    background: rgba(0, 0, 0, 0.3); /* Overlay noir semi-transparent */
     z-index: 1;
 }
 
@@ -397,22 +398,18 @@
     z-index: 2;
 }
 
-.category-card__bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.category-card:hover .category-card__bg {
-    transform: scale(1.05);
+.category-card:hover {
+    transform: scale(2);
+    transform: translateY(-20px); /* Déplacement vers le haut */
+    transform: translateY(-5px); /* Déplacement vers le haut */
+    box-shadow: 0 10px 20px rgb(8, 122, 79); /* Ombre plus prononcée */
+    background-color: rgba(219, 52, 52, 0.2); /* Fond bleu plus marqué */
 }
 
 /* Contenu (titre et description) */
 .category-card__content {
     position: relative; /* Changé de absolute à relative */
-    z-index: 8; /* Z-index plus élevé que l'overlay */
+    z-index: 80; /* Z-index plus élevé que l'overlay */
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -424,27 +421,17 @@
 }
 
 .category-card__title {
-    font-size: 1.5rem;
+    font-size: 3rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: white;                      /* Texte en blanc */
-    text-shadow:
-        -1px -1px 0 #000,              /* Contour noir */
-         1px -1px 0 #000,
-        -1px  1px 0 #000,
-         1px  1px 0 #000,
-        0 0 10px rgba(255,0,0,0.5);    /* Liseret rouge (à ajuster) */
+    color: rgb(255, 255, 255);
+    text-shadow: 10px 1px 2px black; /* Ombre légère pour la lisibilité */
 }
 
 .category-card__description {
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: white;                      /* Texte en blanc */
     text-shadow: 1px 1px 2px black;    /* Ombre légère pour la lisibilité */
-}
-/* Effet de survol */
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive */

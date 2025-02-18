@@ -68,3 +68,6 @@ class User(db.Model):
             'created_at': self.created_at.isoformat(),
             'is_admin': self.is_admin
         }
+        
+    def __repr__(self):
+        return f'<User {self.email}>'
