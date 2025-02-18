@@ -125,7 +125,7 @@ class HomeManager {
                         <p class="product-brand">${product.brand.name}</p>
                         <p class="product-price">${product.price.toFixed(2)} €</p>
                     </div>
-                    <button 
+                    <button
                         class="add-to-cart-btn"
                         onclick="mainManager.addToCart(${product.id})"
                     >

@@ -18,36 +18,9 @@
 <body>
     <!-- En-tête -->
     <header class="main-header">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="container">
-                <!-- Contact Info -->
-                <div class="contact-info">
-                    <a href="tel:+33123456789">
-                        <i class="icon phone-icon"></i>
-                        06 06 77 44 39
-                    </a>
-                    <a href="mailto:contact@fmp.com">
-                        <i class="icon mail-icon"></i>
-                        contact@fmp.com
-                    </a>
-                </div>
-
-                <!-- User Navigation -->
-                <div class="user-nav">
-                    <!-- Ces liens seront gérés par le JavaScript -->
-                    <a href="/login" id="login-link">
-                        <i class="icon user-icon"></i>
-                        Connexion
-                    </a>
-                    <a href="/register" id="register-link">
-                        Inscription
-                    </a>
-                    <!-- Menu utilisateur (affiché après connexion) -->
-                    <div id="user-menu" style="display: none;"></div>
-                </div>
-            </div>
-        </div>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
 
         <!-- Navigation Principale -->
         <nav class="main-nav">
@@ -72,6 +45,20 @@
                         </button>
                     </form>
                 </div>
+
+                            <!-- User Navigation -->
+            <div class="user-nav">
+                <!-- Ces liens seront gérés par le JavaScript -->
+                <a href="/login" id="login-link">
+                    <i class="icon user-icon"></i>
+                    Connexion
+                </a>
+                <a href="/register" id="register-link">
+                    Inscription
+                </a>
+                <!-- Menu utilisateur (affiché après connexion) -->
+                <div id="user-menu" style="display: none;"></div>
+            </div>
 
                 <!-- Panier -->
                 <div class="cart-widget">
@@ -150,9 +137,42 @@
         <!-- Catégories Populaires -->
         <section class="popular-categories">
             <div class="container">
-                <h2 class="section-title">Nos Catégories</h2>
+                <h2 class="section-title">Nos gammes de cartouches</h2>
                 <div class="category-grid" id="featured-categories">
-                    <!-- Injecté par JavaScript -->
+                    <!-- Cartouches écologiques -->
+                    <a href="/categories/ecologique" class="category-card">
+                        <div class="category-card__content">
+                            <h3 class="category-card__title">Cartouches Écologiques</h3>
+                            <p class="category-card__description">Solutions durables et remanufacturées</p>
+                            <img src="/static/images/banners/Designer.jpeg" alt="Cartouches écologiques" class = "category-card__bg">
+                        </div>
+                    </a>
+        
+                    <!-- Cartouches originales -->
+                    <a href="/categories/originale" class="category-card">
+                        <img
+                            src="static/images/categories/original-cartridge.jpg"
+                            alt="Cartouches originales"
+                            class="category-card__bg">
+                        <div class="category-card__content">
+                            <h3 class="category-card__title">Cartouches Originales</h3>
+                            <p class="category-card__description">Qualité constructeur garantie</p>
+                            <img src="/static/images/logos_marque/marques_liste.jpg" alt="Cartouches écologiques" class = "category-card__bg">
+                        </div>
+                    </a>
+        
+                    <!-- Cartouches compatibles -->
+                    <a href="/categories/compatible" class="category-card">
+                        <img
+                            src="static/images/categories/compatible-cartridge.jpg"
+                            alt="Cartouches compatibles"
+                            class="category-card__bg">
+                        <div class="category-card__content">
+                            <h3 class="category-card__title">Cartouches Compatibles</h3>
+                            <p class="category-card__description">Solutions économiques de qualité</p>
+                            <img src="/static/images/banners/EconomyMain.jpg" alt="Cartouches écologiques" class = "category-card__bg">
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
@@ -184,8 +204,8 @@
                     <h2>Restez informé !</h2>
                     <p>Inscrivez-vous à notre newsletter pour recevoir nos meilleures offres</p>
                     <form id="newsletter-form">
-                        <input type="email" 
-                               placeholder="Votre adresse email" 
+                        <input type="email"
+                               placeholder="Votre adresse email"
                                required>
                         <button type="submit" class="cta-button">
                             S'inscrire
@@ -245,12 +265,12 @@
                     <address class="contact-info">
                         <p>
                             <i class="icon map-icon"></i>
-                            123 Rue du Commerce<br>
-                            75001 Paris, France
+                            Place de la Liberté<br>
+                            53000 Laval, France
                         </p>
                         <p>
                             <i class="icon phone-icon"></i>
-                            01 23 45 67 89
+                            06 06 77 44 39
                         </p>
                         <p>
                             <i class="icon mail-icon"></i>
@@ -262,7 +282,7 @@
 
             <!-- Copyright -->
             <div class="footer-bottom">
-                <p>&copy; 2024 FMP - For My Printer. Tous droits réservés.</p>
+                <p>&copy; 2025 FMP - For My Printer. Tous droits réservés.</p>
             </div>
         </div>
     </footer>

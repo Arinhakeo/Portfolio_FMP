@@ -17,6 +17,7 @@
     z-index: 100;
     background: white;
     box-shadow: var(--shadow);
+    margin: auto;
 }
 
 /* Top Bar */
@@ -50,6 +51,7 @@
 .user-nav {
     display: flex;
     gap: 1rem;
+    
 }
 
 .user-nav a {
@@ -64,12 +66,18 @@
 
 /* Navigation Principale */
 .main-nav {
-    padding: 1rem 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
     border-bottom: 1px solid var(--border-color);
+    margin: 10px;
 }
 
 .main-nav .container {
-    display: grid;
+    display: align-items;
+    width: 100%;
+    padding: 0;
+    margin: 0;
     grid-template-columns: auto 1fr auto;
     gap: 2rem;
     align-items: center;
@@ -84,6 +92,8 @@
 .search-bar {
     max-width: 600px;
     width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 
 }
 
@@ -129,6 +139,7 @@
 
 .cart-widget {
     position: relative;
+    margin: auto 20px auto 20px;
 }
 
 .cart-link {
@@ -160,11 +171,6 @@
 }
 
 /* Menu Catégories */
-.category-nav {
-    background: var(--light-gray);
-    padding: 0.5rem 0;
-}
-
 .category-nav ul {
     display: flex;
     gap: 2rem;
@@ -183,11 +189,43 @@
 .category-nav a:hover {
     color: var(--primary-color);
 }
+/* Conteneur de la bannière défilante */
+.background-banner {
+    width: 100%;
+    overflow: hidden; /* Cache le texte qui dépasse */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+    background-color: #f0f0f0; /* Couleur de fond */
+    padding: 5px 0;
+    margin-top: 10px; /* Espacement avec le menu des catégories */
+}
 
+/* Texte défilant */
+.scrolling-text {
+    display: inline-block;
+    padding-left: 100%; /* Démarre le texte hors de l'écran */
+    animation: scroll-text 15s linear infinite;
+}
+
+.scrolling-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #333; /* Couleur du texte */
+}
+
+/* Animation */
+@keyframes scroll-text {
+    from {
+        transform: translateX(100%); /* Démarre à droite */
+    }
+    to {
+        transform: translateX(-100%); /* Se termine à gauche */
+    }
+}
 /* Slider Principal */
 .hero-slider {
     position: relative;
     margin-bottom: 3rem;
+    margin: auto;
 }
 
 .slider-container {
@@ -256,7 +294,7 @@
 
 /* Avantages */
 .features {
-    padding: 3rem 0;
+    padding: 1em 0;
     background: white;
 }
 
@@ -287,11 +325,12 @@
 
 /* Catégories Populaires */
 .popular-categories {
-    padding: 4rem 0;
+    padding : 0 20px;
     background: var(--light-gray);
 }
 
 .section-title {
+    padding: 0;
     text-align: center;
     margin-bottom: 2rem;
     color: var(--text-color);
@@ -299,8 +338,125 @@
 
 .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+    padding: 2rem 0;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.category-card {
+    position: relative;
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* Style de l'image de fond */
+.category-card__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+}
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+/* Overlay plus foncé pour améliorer la lisibilité */
+.category-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Overlay noir semi-transparent */
+    z-index: 1;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+    z-index: 2;
+}
+
+.category-card__bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-card__bg {
+    transform: scale(1.05);
+}
+
+/* Contenu (titre et description) */
+.category-card__content {
+    position: relative; /* Changé de absolute à relative */
+    z-index: 8; /* Z-index plus élevé que l'overlay */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}
+
+.category-card__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: white;                      /* Texte en blanc */
+    text-shadow:
+        -1px -1px 0 #000,              /* Contour noir */
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+        0 0 10px rgba(255,0,0,0.5);    /* Liseret rouge (à ajuster) */
+}
+
+.category-card__description {
+    font-size: 1rem;
+    color: white;                      /* Texte en blanc */
+    text-shadow: 1px 1px 2px black;    /* Ombre légère pour la lisibilité */
+}
+/* Effet de survol */
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .category-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .category-card {
+        height: 250px;
+    }
 }
 
 /* Produits en Vedette */
