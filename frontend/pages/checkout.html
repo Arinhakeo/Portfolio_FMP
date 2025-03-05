@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation de commande | FMP</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/checkout.css">
+</head>
+<body>
+    <header>
+        <!-- Navigation et en-tête du site -->
+    </header>
+    
+    <main class="checkout-container">
+        <h1>Validation de votre commande</h1>
+        
+        <div class="checkout-progress">
+            <div class="progress-step active" data-step="address">1. Adresse</div>
+            <div class="progress-step" data-step="payment">2. Paiement</div>
+            <div class="progress-step" data-step="confirmation">3. Confirmation</div>
+        </div>
+        
+        <div class="checkout-content">
+            <!-- Étape 1: Adresse de livraison -->
+            <section id="address-step" class="checkout-step active">
+                <h2>Adresse de livraison</h2>
+                
+                <div class="saved-addresses" id="saved-addresses-container">
+                    <h3>Adresses enregistrées</h3>
+                    <div class="addresses-list" id="addresses-list">
+                        <!-- Les adresses enregistrées seront affichées ici -->
+                        <p id="no-addresses-message">Aucune adresse enregistrée</p>
+                    </div>
+                </div>
+                
+                <div class="new-address">
+                    <h3>Nouvelle adresse</h3>
+                    <form id="address-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstname">Prénom *</label>
+                                <input type="text" id="firstname" name="firstname" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Nom *</label>
+                                <input type="text" id="lastname" name="lastname" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="company">Société (optionnel)</label>
+                            <input type="text" id="company" name="company">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Adresse *</label>
+                            <input type="text" id="address" name="address" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Complément d'adresse</label>
+                            <input type="text" id="address2" name="address2">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postal_code">Code postal *</label>
+                                <input type="text" id="postal_code" name="postal_code" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">Ville *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Pays *</label>
+                            <select id="country" name="country" required>
+                                <option value="FR">France</option>
+                                <option value="BE">Belgique</option>
+                                <option value="CH">Suisse</option>
+                                <option value="LU">Luxembourg</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Téléphone *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="save_address" name="save_address">
+                            <label for="save_address">Enregistrer cette adresse pour mes prochaines commandes</label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" id="back-to-cart" class="btn btn-secondary">Retour au panier</button>
+                            <button type="submit" class="btn btn-primary">Continuer vers le paiement</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- Étape 2: Méthode de paiement -->
+            <section id="payment-step" class="checkout-step">
+                <h2>Méthode de paiement</h2>
+                
+                <form id="payment-form">
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input type="radio" id="payment-card" name="payment_method" value="card" checked>
+                            <label for="payment-card">Carte bancaire</label>
+                            <div class="payment-details card-details">
+                                <div class="form-group">
+                                    <label for="card-number">Numéro de carte</label>
+                                    <input type="text" id="card-number" name="card_number" placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="card-expiry">Date d'expiration</label>
+                                        <input type="text" id="card-expiry" name="card_expiry" placeholder="MM/AA">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="card-cvc">CVC</label>
+                                        <input type="text" id="card-cvc" name="card_cvc" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method">
+                            <input type="radio" id="payment-transfer" name="payment_method" value="transfer">
+                            <label for="payment-transfer">Virement bancaire</label>
+                            <div class="payment-details transfer-details">
+                                <p>Les détails du virement vous seront communiqués après validation de votre commande.</p>
+                                <p>Votre commande sera traitée dès réception du paiement.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="back-to-address" class="btn btn-secondary">Retour aux adresses</button>
+                        <button type="submit" class="btn btn-primary">Valider la commande</button>
+                    </div>
+                </form>
+            </section>
+            
+            <!-- Étape 3: Confirmation de commande -->
+            <section id="confirmation-step" class="checkout-step">
+                <h2>Confirmation de commande</h2>
+                
+                <div class="order-confirmation">
+                    <div class="confirmation-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24">
+                            <path fill="#4caf50" d="M9,16.17L4.83,12l-1.42,1.41L9,19 21,7l-1.41-1.41L9,16.17z"/>
+                        </svg>
+                    </div>
+                    <h3>Merci pour votre commande !</h3>
+                    <p>Votre commande a été enregistrée avec succès.</p>
+                    <p>Numéro de commande: <strong id="order-number">--</strong></p>
+                    <p>Un email de confirmation a été envoyé à <span id="customer-email">--</span>.</p>
+                    
+                    <div class="order-summary">
+                        <h4>Récapitulatif de votre commande</h4>
+                        <div id="order-details">
+                            <!-- Les détails de la commande seront affichés ici -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="checkout-summary">
+            <h2>Récapitulatif</h2>
+            <div id="checkout-cart-summary">
+                <!-- Le résumé du panier sera affiché ici -->
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <!-- Pied de page -->
+    </footer>
+    
+    <script src="/static/js/checkout.js"></script>
+</body>
+</html>

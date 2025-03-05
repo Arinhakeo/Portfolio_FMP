@@ -1,17 +1,22 @@
 # backend/app/products/routes.py
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.utils import secure_filename
 from app import db
+from app.models.user import User
 from app.products.models import Product, Category, Brand, ProductImage, ProductSpecification
 from app.products.schemas import ProductSchema, CategorySchema, BrandSchema
-from app.models.user import User
-from app.products.utils import save_product_image, delete_product_image
+from app.products.utils import save_product_image, delete_product_image, allowed_file
+import os, uuid
+from slugify import slugify
+from functools import wraps  # Partie de la bibliothèque standard de Python
+from flask import abort      # Partie de Flask
+from app.utils.decorators import admin_required
 
-# Création du Blueprint
 products_bp = Blueprint('products', __name__, url_prefix='/api/products')
 
-# Initialisation des schémas
+# Initialisation des schémas pour la sérialisation
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 category_schema = CategorySchema()
@@ -19,273 +24,375 @@ categories_schema = CategorySchema(many=True)
 brand_schema = BrandSchema()
 brands_schema = BrandSchema(many=True)
 
-# =========================================
-# Routes pour les produits
-# =========================================
-@products_bp.route('/categories', methods=['GET'])
-def get_categories():
-    # Retourner vos catégories
-    return jsonify([
-        {"id": 1, "name": "Écologique", "slug": "ecologique"},
-        {"id": 2, "name": "Originale", "slug": "originale"},
-        {"id": 3, "name": "Compatible", "slug": "compatible"}
-    ])
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or not user.is_admin:
+            return jsonify({"error": "Accès administrateur requis"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
-@products_bp.route('/categories/<slug>', methods=['GET'])
-def get_category(slug):
-    # Logique pour afficher les produits d'une catégorie
-    pass
+# ============================================================================
+#                         Routes pour la gestion des produits
+# ============================================================================
 
 @products_bp.route('/', methods=['GET'])
 def get_products():
-    """Récupère la liste des produits avec filtres optionnels.
-    
-    Query Params:
-        category (str): Filtre par catégorie
-        brand (str): Filtre par marque
-        search (str): Recherche dans le nom/description
-        sort (str): Tri par champ
-        page (int): Numéro de page
-        limit (int): Nombre d'éléments par page
-    """
+    """Récupère la liste des produits avec filtres optionnels."""
     try:
-        # Récupération des paramètres
-        category = request.args.get('category')
-        brand = request.args.get('brand')
-        search = request.args.get('search')
-        sort = request.args.get('sort', 'name')
-        page = int(request.args.get('page', 1))
-        limit = int(request.args.get('limit', 20))
-
+        # Filtres de recherche
+        search = request.args.get('search', '')
+        category_id = request.args.get('category_id', type=int)
+        brand_id = request.args.get('brand_id', type=int)
+        min_price = request.args.get('min_price', type=float)
+        max_price = request.args.get('max_price', type=float)
+        in_stock = request.args.get('in_stock', type=bool, default=False)
+        
+        # Pagination
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        
         # Construction de la requête
-        query = Product.query.filter_by(is_active=True)
-
+        query = Product.query
+        
         # Application des filtres
-        if category:
-            query = query.join(Category).filter(Category.slug == category)
-        
-        if brand:
-            query = query.join(Brand).filter(Brand.slug == brand)
-        
         if search:
             search_term = f"%{search}%"
-            query = query.filter(
-                (Product.name.ilike(search_term)) |
-                (Product.description.ilike(search_term)) |
-                (Product.sku.ilike(search_term))
-            )
-
-        # Tri
-        if sort.startswith('-'):
-            query = query.order_by(getattr(Product, sort[1:]).desc())
-        else:
-            query = query.order_by(getattr(Product, sort).asc())
-
-        # Pagination
-        pagination = query.paginate(page=page, per_page=limit, error_out=False)
-        products = pagination.items
-
-        # Préparation de la réponse
-        response = {
-            'items': products_schema.dump(products),
-            'total': pagination.total,
-            'pages': pagination.pages,
-            'current_page': page
+            query = query.filter(Product.name.ilike(search_term) | Product.sku.ilike(search_term))
+        
+        if category_id:
+            query = query.filter(Product.category_id == category_id)
+            
+        if brand_id:
+            query = query.filter(Product.brand_id == brand_id)
+            
+        if min_price is not None:
+            query = query.filter(Product.price >= min_price)
+            
+        if max_price is not None:
+            query = query.filter(Product.price <= max_price)
+            
+        if in_stock:
+            query = query.filter(Product.stock_quantity > 0)
+            
+        # Tri par défaut
+        query = query.order_by(Product.name)
+        
+        # Exécution de la requête paginée
+        paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        # Résultat formaté
+        result = {
+            'items': products_schema.dump(paginated_products.items),
+            'total': paginated_products.total,
+            'pages': paginated_products.pages,
+            'page': page,
+            'per_page': per_page
         }
-
-        return jsonify(response), 200
-
+        
+        return jsonify(result), 200
+    
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la récupération des produits: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@products_bp.route('/<int:product_id>', methods=['GET'])
+def get_product_by_id(product_id):
+    """Récupère un produit par son ID."""
+    try:
+        product = Product.query.get_or_404(product_id)
+        return jsonify(product_schema.dump(product)), 200
+    except Exception as e:
+        current_app.logger.error(f"Erreur lors de la récupération du produit {product_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @products_bp.route('/<string:slug>', methods=['GET'])
-def get_product(slug):
-    """Récupère les détails d'un produit par son slug."""
+def get_product_by_slug(slug):
+    """Récupère un produit par son slug."""
     try:
-        product = Product.query.filter_by(slug=slug, is_active=True).first_or_404()
+        product = Product.query.filter_by(slug=slug).first_or_404()
         return jsonify(product_schema.dump(product)), 200
-
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la récupération du produit {slug}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @products_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_product():
-    """Crée un nouveau produit (admin seulement)."""
+    """Crée un nouveau produit."""
     try:
-        # Vérification des droits admin
-        current_user_id = get_jwt_identity()
-        user = User.query.get(current_user_id)
+        # Récupération des données
+        data = request.json
         
-        if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
-        # Validation des données
-        data = request.get_json()
-        errors = product_schema.validate(data)
-        if errors:
-            return jsonify({'error': errors}), 400
-
+        # Génération du slug
+        slug = slugify(data.get('name', ''))
+        
+        # Vérification de l'unicité du slug
+        if Product.query.filter_by(slug=slug).first():
+            # Ajout d'un identifiant unique si le slug existe déjà
+            slug = f"{slug}-{uuid.uuid4().hex[:6]}"
+        
         # Création du produit
-        product = Product(
-            sku=data['sku'],
-            name=data['name'],
-            price=data['price'],
-            category_id=data['category_id'],
-            brand_id=data['brand_id'],
+        new_product = Product(
+            sku=data.get('sku'),
+            name=data.get('name'),
+            slug=slug,
             description=data.get('description'),
             short_description=data.get('short_description'),
+            price=data.get('price'),
             stock_quantity=data.get('stock_quantity', 0),
-            min_stock_level=data.get('min_stock_level', 5)
+            min_stock_level=data.get('min_stock_level', 5),
+            category_id=data.get('category_id'),
+            brand_id=data.get('brand_id'),
+            is_active=data.get('is_active', True)
         )
-
-        # Ajout des spécifications
-        if 'specifications' in data:
-            for spec in data['specifications']:
-                product.specifications.append(
-                    ProductSpecification(**spec)
-                )
-
-        db.session.add(product)
+        
+        db.session.add(new_product)
         db.session.commit()
-
-        return jsonify(product_schema.dump(product)), 201
-
+        
+        # Traitement des spécifications
+        specifications = data.get('specifications', [])
+        for spec in specifications:
+            new_spec = ProductSpecification(
+                product_id=new_product.id,
+                name=spec.get('name'),
+                value=spec.get('value'),
+                unit=spec.get('unit', '')
+            )
+            db.session.add(new_spec)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Produit créé avec succès",
+            "product": product_schema.dump(new_product)
+        }), 201
+        
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la création du produit: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @products_bp.route('/<int:product_id>', methods=['PUT'])
 @jwt_required()
 def update_product(product_id):
-    """Met à jour un produit existant (admin seulement)."""
+    """Met à jour un produit existant."""
     try:
-        # Vérification des droits admin
+        # Vérification des permissions admin
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        
         if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
+            return jsonify({"error": "Accès non autorisé"}), 403
+        
         # Récupération du produit
         product = Product.query.get_or_404(product_id)
-
-        # Validation des données
-        data = request.get_json()
-        errors = product_schema.validate(data, partial=True)
-        if errors:
-            return jsonify({'error': errors}), 400
-
+        
+        # Récupération des données
+        data = request.json
+        
         # Mise à jour des champs
-        for field in ['name', 'description', 'short_description', 'price',
-                    'stock_quantity', 'min_stock_level', 'category_id',
-                    'brand_id', 'is_active']:
-            if field in data:
-                setattr(product, field, data[field])
-
+        if 'name' in data:
+            product.name = data['name']
+            # Mise à jour du slug si le nom change
+            product.slug = slugify(data['name'])
+        
+        if 'sku' in data:
+            product.sku = data['sku']
+            
+        if 'description' in data:
+            product.description = data['description']
+            
+        if 'short_description' in data:
+            product.short_description = data['short_description']
+            
+        if 'price' in data:
+            product.price = data['price']
+            
+        if 'stock_quantity' in data:
+            product.stock_quantity = data['stock_quantity']
+            
+        if 'min_stock_level' in data:
+            product.min_stock_level = data['min_stock_level']
+            
+        if 'category_id' in data:
+            product.category_id = data['category_id']
+            
+        if 'brand_id' in data:
+            product.brand_id = data['brand_id']
+            
+        if 'is_active' in data:
+            product.is_active = data['is_active']
+        
         # Mise à jour des spécifications
         if 'specifications' in data:
             # Suppression des anciennes spécifications
-            product.specifications = []
+            ProductSpecification.query.filter_by(product_id=product.id).delete()
             
             # Ajout des nouvelles spécifications
             for spec in data['specifications']:
-                product.specifications.append(
-                    ProductSpecification(**spec)
+                new_spec = ProductSpecification(
+                    product_id=product.id,
+                    name=spec.get('name'),
+                    value=spec.get('value'),
+                    unit=spec.get('unit', '')
                 )
-
+                db.session.add(new_spec)
+        
         db.session.commit()
-
-        return jsonify(product_schema.dump(product)), 200
-
+        
+        return jsonify({
+            "message": "Produit mis à jour avec succès",
+            "product": product_schema.dump(product)
+        }), 200
+        
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la mise à jour du produit {product_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@products_bp.route('/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+def delete_product(product_id):
+    """Supprime un produit."""
+    try:
+        # Vérification des permissions admin
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or not user.is_admin:
+            return jsonify({"error": "Accès non autorisé"}), 403
+        
+        # Récupération du produit
+        product = Product.query.get_or_404(product_id)
+        
+        # Suppression des images
+        for image in product.images:
+            delete_product_image(image.url)
+        
+        # Suppression du produit (la cascade supprimera les specs et images)
+        db.session.delete(product)
+        db.session.commit()
+        
+        return jsonify({"message": "Produit supprimé avec succès"}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur lors de la suppression du produit {product_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# ============================================================================
+#                       Routes pour la gestion des images
+# ============================================================================
 
 @products_bp.route('/<int:product_id>/images', methods=['POST'])
 @jwt_required()
 def upload_product_image(product_id):
     """Ajoute une image à un produit."""
     try:
-        # Vérification des droits admin
+        # Vérification des permissions admin
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        
         if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
+            return jsonify({"error": "Accès non autorisé"}), 403
+        
         # Vérification du produit
         product = Product.query.get_or_404(product_id)
-
+        
         # Vérification du fichier
         if 'image' not in request.files:
-            return jsonify({'error': 'Aucune image fournie'}), 400
-
+            return jsonify({"error": "Aucune image fournie"}), 400
+            
         file = request.files['image']
         
-        if not file.filename:
-            return jsonify({'error': 'Nom de fichier invalide'}), 400
-
+        if file.filename == '':
+            return jsonify({"error": "Aucun fichier sélectionné"}), 400
+            
+        if not allowed_file(file.filename):
+            return jsonify({"error": "Type de fichier non autorisé"}), 400
+        
         # Sauvegarde de l'image
-        image_url = save_product_image(file)
-
-        # Création de l'entrée dans la base
-        image = ProductImage(
-            product_id=product_id,
-            url=image_url,
-            alt=request.form.get('alt', product.name),
-            is_primary=not bool(product.images),  # Premier = image principale
-            position=len(product.images)
-        )
-
-        db.session.add(image)
-        db.session.commit()
-
-        return jsonify({
-            'message': 'Image ajoutée avec succès',
-            'image': image.to_dict()
-        }), 201
-
+        try:
+            # Génération d'un nom de fichier unique
+            filename = secure_filename(file.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            
+            # Chemin de sauvegarde
+            upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'products')
+            os.makedirs(upload_folder, exist_ok=True)
+            file_path = os.path.join(upload_folder, unique_filename)
+            
+            # Sauvegarde du fichier
+            file.save(file_path)
+            
+            # URL relative pour la base de données
+            relative_path = f"/static/uploads/products/{unique_filename}"
+            
+            # Création de l'entrée dans la base de données
+            new_image = ProductImage(
+                product_id=product_id,
+                url=relative_path,
+                alt=request.form.get('alt', product.name),
+                is_primary=request.form.get('is_primary', 'false').lower() == 'true'
+            )
+            
+            db.session.add(new_image)
+            db.session.commit()
+            
+            return jsonify({
+                "message": "Image uploadée avec succès",
+                "image": {
+                    "id": new_image.id,
+                    "url": new_image.url,
+                    "alt": new_image.alt,
+                    "is_primary": new_image.is_primary
+                }
+            }), 201
+            
+        except Exception as e:
+            current_app.logger.error(f"Erreur lors de l'upload de l'image: {str(e)}")
+            return jsonify({"error": f"Erreur lors de l'upload: {str(e)}"}), 500
+            
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de l'ajout d'image au produit {product_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
-@products_bp.route('/<int:product_id>/images/<int:image_id>', methods=['DELETE'])
+@products_bp.route('/images/<int:image_id>', methods=['DELETE'])
 @jwt_required()
-def delete_image(product_id, image_id):
-    """Supprime une image d'un produit."""
+def delete_image(image_id):
+    """Supprime une image de produit."""
     try:
-        # Vérification des droits admin
+        # Vérification des permissions admin
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        
         if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
-        # Vérification de l'image
-        image = ProductImage.query.filter_by(
-            id=image_id,
-            product_id=product_id
-        ).first_or_404()
-
+            return jsonify({"error": "Accès non autorisé"}), 403
+        
+        # Récupération de l'image
+        image = ProductImage.query.get_or_404(image_id)
+        
+        # Chemin du fichier
+        file_path = os.path.join(current_app.root_path, 'static', image.url.lstrip('/static/'))
+        
         # Suppression du fichier
-        delete_product_image(image.url)
-
-        # Suppression de l'entrée
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        # Suppression de l'entrée dans la base de données
         db.session.delete(image)
         db.session.commit()
-
-        return jsonify({
-            'message': 'Image supprimée avec succès'
-        }), 200
-
+        
+        return jsonify({"message": "Image supprimée avec succès"}), 200
+        
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la suppression de l'image {image_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
-# =========================================
-# Routes pour les catégories
-# =========================================
+# ============================================================================
+#                         Routes pour les catégories
+# ============================================================================
 
 @products_bp.route('/categories', methods=['GET'])
 def get_categories():
@@ -293,43 +400,48 @@ def get_categories():
     try:
         categories = Category.query.all()
         return jsonify(categories_schema.dump(categories)), 200
-
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la récupération des catégories: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @products_bp.route('/categories', methods=['POST'])
 @jwt_required()
 def create_category():
-    """Crée une nouvelle catégorie (admin seulement)."""
+    """Crée une nouvelle catégorie."""
     try:
-        # Vérification des droits admin
+        # Vérification des permissions admin
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        
         if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
-        # Validation des données
-        data = request.get_json()
-        errors = category_schema.validate(data)
-        if errors:
-            return jsonify({'error': errors}), 400
-
-        # Création de la catégorie
-        category = Category(**data)
+            return jsonify({"error": "Accès non autorisé"}), 403
         
-        db.session.add(category)
+        # Récupération des données
+        data = request.json
+        
+        # Création de la catégorie
+        new_category = Category(
+            name=data.get('name'),
+            description=data.get('description'),
+            image_url=data.get('image_url'),
+            parent_id=data.get('parent_id')
+        )
+        
+        db.session.add(new_category)
         db.session.commit()
-
-        return jsonify(category_schema.dump(category)), 201
-
+        
+        return jsonify({
+            "message": "Catégorie créée avec succès",
+            "category": category_schema.dump(new_category)
+        }), 201
+        
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la création de la catégorie: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
-# =========================================
-# Routes pour les marques
-# =========================================
+# ============================================================================
+#                         Routes pour les marques
+# ============================================================================
 
 @products_bp.route('/brands', methods=['GET'])
 def get_brands():
@@ -337,36 +449,41 @@ def get_brands():
     try:
         brands = Brand.query.all()
         return jsonify(brands_schema.dump(brands)), 200
-
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la récupération des marques: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @products_bp.route('/brands', methods=['POST'])
 @jwt_required()
 def create_brand():
-    """Crée une nouvelle marque (admin seulement)."""
+    """Crée une nouvelle marque."""
     try:
-        # Vérification des droits admin
+        # Vérification des permissions admin
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        
         if not user or not user.is_admin:
-            return jsonify({'error': 'Accès non autorisé'}), 403
-
-        # Validation des données
-        data = request.get_json()
-        errors = brand_schema.validate(data)
-        if errors:
-            return jsonify({'error': errors}), 400
-
-        # Création de la marque
-        brand = Brand(**data)
+            return jsonify({"error": "Accès non autorisé"}), 403
         
-        db.session.add(brand)
+        # Récupération des données
+        data = request.json
+        
+        # Création de la marque
+        new_brand = Brand(
+            name=data.get('name'),
+            description=data.get('description'),
+            logo_url=data.get('logo_url'),
+            website=data.get('website')
+        )
+        
+        db.session.add(new_brand)
         db.session.commit()
-
-        return jsonify(brand_schema.dump(brand)), 201
-
+        
+        return jsonify({
+            "message": "Marque créée avec succès",
+            "brand": brand_schema.dump(new_brand)
+        }), 201
+        
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        current_app.logger.error(f"Erreur lors de la création de la marque: {str(e)}")
+        return jsonify({"error": str(e)}), 500

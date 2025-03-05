@@ -1,5 +1,13 @@
+# ============================================================================
+#                         ROUTES D'AUTHENTIFICATION
+# ============================================================================
+
+"""
+Module de gestion des routes d'API pour l'authentification
+Gère l'inscription, la connexion, et la gestion du profil utilisateur
+"""
+
 from flask import Blueprint, request, jsonify
-from flask import render_template
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -9,23 +17,32 @@ from flask_jwt_extended import (
 from app import db
 from app.models.user import User
 from email_validator import validate_email, EmailNotValidError
+import logging
 
+# ============================================================================
+#                         CONFIGURATION
+# ============================================================================
+
+logger = logging.getLogger(__name__)
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
-    # Route d'enregistrement utilisateur
+# ============================================================================
+#                         ROUTES D'INSCRIPTION
+# ============================================================================
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    """Enregistrement d'un nouvel utilisateur.
-    pip install em
-    Attends un JSON avec:
+    """
+    Enregistrement d'un nouvel utilisateur
+    
+    Attend un JSON avec:
         - email: Email de l'utilisateur
         - password: Mot de passe
         - firstname: Prénom
         - lastname: Nom
     
     Returns:
-        JSON: Données utilisateur et token d'accès
+        JSON: Données utilisateur et tokens d'accès/rafraîchissement
     """
     try:
         data = request.get_json()
@@ -61,24 +78,29 @@ def register():
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
 
+        # Réponse avec tokens en format uniforme
         return jsonify({
             'message': 'Inscription réussie',
             'user': user.to_dict(),
-            'access_token': access_token,
+            'token': access_token,  # Clé renommée pour cohérence avec le frontend
             'refresh_token': refresh_token
         }), 201
 
     except Exception as e:
+        logger.error(f"Erreur d'inscription: {str(e)}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-    # Route de connexion utilisateur
+# ============================================================================
+#                         ROUTES DE CONNEXION
+# ============================================================================
     
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Route de connexion utilisateur.
+    """
+    Route de connexion utilisateur
     
-    Attends un JSON avec:
+    Attend un JSON avec:
         - email: Email de l'utilisateur
         - password: Mot de passe
     
@@ -113,25 +135,33 @@ def login():
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
 
-        # Retour de la réponse
+        # Mise à jour de la dernière connexion
+        user.update_last_login()
+        db.session.commit()
+
+        # Retour de la réponse avec format de token uniforme
         return jsonify({
             'message': 'Connexion réussie',
             'user': user.to_dict(),
-            'access_token': access_token,
+            'token': access_token,  # Clé renommée pour cohérence avec le frontend
             'refresh_token': refresh_token
         }), 200
 
     except Exception as e:
+        logger.error(f"Erreur de connexion: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-    # Route de  récupération du profil utilisateur
+# ============================================================================
+#                         ROUTES DE PROFIL
+# ============================================================================
 
 @auth_bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_profile():
-    """Récupère le profil de l'utilisateur connecté.
+    """
+    Récupère le profil de l'utilisateur connecté
     
-    Nécessite un token JWT valide dans le header Authorization.
+    Nécessite un token JWT valide dans le header Authorization
     
     Returns:
         JSON: Données du profil utilisateur
@@ -152,16 +182,16 @@ def get_profile():
         return jsonify(user.to_dict()), 200
 
     except Exception as e:
+        logger.error(f"Erreur récupération profil: {str(e)}")
         return jsonify({'error': str(e)}), 500
-    
-    # Route de modification du profil utilisateur
     
 @auth_bp.route('/me', methods=['PUT'])
 @jwt_required()
 def update_profile():
-    """Met à jour le profil de l'utilisateur connecté.
+    """
+    Met à jour le profil de l'utilisateur connecté
     
-    Attends un JSON avec les champs à modifier:
+    Attend un JSON avec les champs à modifier:
         - firstname (optionnel): Nouveau prénom
         - lastname (optionnel): Nouveau nom
         - current_password (requis pour changer le mot de passe)
@@ -212,17 +242,21 @@ def update_profile():
         }), 200
 
     except Exception as e:
+        logger.error(f"Erreur mise à jour profil: {str(e)}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
-    # Route de renouvellement du token d'accès
+# ============================================================================
+#                         ROUTES DE GESTION DES TOKENS
+# ============================================================================
 
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh_token():
-    """Renouvelle le token d'accès en utilisant le refresh token.
+    """
+    Renouvelle le token d'accès en utilisant le refresh token
     
-    Nécessite un refresh token valide dans le header Authorization.
+    Nécessite un refresh token valide dans le header Authorization
     
     Returns:
         JSON: Nouveau token d'accès
@@ -241,18 +275,18 @@ def refresh_token():
         new_access_token = create_access_token(identity=current_user_id)
         
         return jsonify({
-            'access_token': new_access_token
+            'token': new_access_token  # Clé renommée pour cohérence avec le frontend
         }), 200
 
     except Exception as e:
+        logger.error(f"Erreur rafraîchissement token: {str(e)}")
         return jsonify({'error': str(e)}), 500
-    
-    # Route de déconnexion utilisateur
     
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    """Gère la déconnexion de l'utilisateur.
+    """
+    Gère la déconnexion de l'utilisateur
     
     Dans une implémentation JWT, la déconnexion se fait côté client
     en supprimant le token, mais cette route peut être utilisée
@@ -262,12 +296,16 @@ def logout():
         JSON: Message de confirmation
     """
     try:
-        # Note: Dans une implémentation plus complexe, on pourrait
-        # ajouter le token à une liste noire ici
+        # Récupération de l'identité utilisateur pour logging
+        current_user_id = get_jwt_identity()
+        logger.info(f"Déconnexion de l'utilisateur ID: {current_user_id}")
+        
+        # Dans une implémentation plus avancée, on pourrait ajouter le token à une liste noire ici
         
         return jsonify({
             'message': 'Déconnexion réussie'
         }), 200
 
     except Exception as e:
+        logger.error(f"Erreur déconnexion: {str(e)}")
         return jsonify({'error': str(e)}), 500

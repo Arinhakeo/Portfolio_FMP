@@ -1,0 +1,254 @@
+/* static/css/checkout.css */
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.checkout-progress::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #e0e0e0;
+    z-index: -1;
+}
+
+.progress-step {
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 2px solid #e0e0e0;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-step.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.checkout-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.checkout-step {
+    display: none;
+    width: 100%;
+}
+
+.checkout-step.active {
+    display: block;
+}
+
+.checkout-summary {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 30px;
+}
+
+/* Styles des formulaires */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-checkbox {
+    margin: 20px 0;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+/* Adresses enregistrées */
+.saved-addresses {
+    margin-bottom: 30px;
+}
+
+.addresses-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.address-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    flex: 1;
+    min-width: 250px;
+    cursor: pointer;
+    position: relative;
+}
+
+.address-card.selected {
+    border-color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+.address-card .address-actions {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* Méthodes de paiement */
+.payment-methods {
+    margin-bottom: 30px;
+}
+
+/* Méthodes de paiement  */
+.payment-method {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.payment-method label {
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.payment-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    display: none;
+}
+
+.payment-method input[type="radio"]:checked ~ .payment-details {
+    display: block;
+}
+
+/* Étape de confirmation */
+.order-confirmation {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.confirmation-icon {
+    margin-bottom: 20px;
+}
+
+.order-summary {
+    margin-top: 30px;
+    text-align: left;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Résumé de la commande */
+.checkout-summary .cart-item {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.checkout-summary .item-image {
+    width: 60px;
+    margin-right: 10px;
+}
+
+.checkout-summary .item-details {
+    flex: 2;
+}
+
+.checkout-summary .item-details h4 {
+    margin: 0 0 5px;
+    font-size: 14px;
+}
+
+.checkout-summary .item-quantity {
+    color: #666;
+    font-size: 14px;
+}
+
+.checkout-summary .item-price {
+    flex: 1;
+    text-align: right;
+}
+
+.summary-details {
+    margin-top: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding:.8em 0;
+    border-bottom: 1px solid #eee;
+}
+
+.total-row {
+    font-weight: bold;
+    font-size: 18px;
+    border-top: 2px solid #ddd;
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+    .checkout-content {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .checkout-step {
+        flex: 3;
+    }
+    
+    .checkout-summary {
+        flex: 1;
+        min-width: 300px;
+        align-self: flex-start;
+        position: sticky;
+        top: 20px;
+        margin-top: 0;
+    }
+}

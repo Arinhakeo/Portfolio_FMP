@@ -5,40 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FMP Admin - Gestion des Catégories</title>
-    <link rel="stylesheet" href="../../static/css/admin.css">
-    <link rel="stylesheet" href="../../static/css/forms.css">
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <link rel="stylesheet" href="/static/css/css_admin/forms.css">
     
     <!-- Vérification admin -->
     <script type="module">
-        import { session } from '../../../static/js/session.js';
-        const userData = session.getUserData();
-        if (!userData?.is_admin) {
-            window.location.href = '/login.html';
-        }
+        import { session } from '/static/js/session.js';
+        
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            console.log("Données utilisateur:", userData);
+            
+            if (!session.isAuthenticated()) {
+                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
+            if (!userData?.is_admin) {
+                window.location.href = '/pages/login.html?message=admin_required';
+                return;
+            }
+        });
     </script>
 </head>
 <body>
-    <!-- Menu latéral admin -->
-    <aside class="admin-sidebar">
-        <!-- ... Menu identique aux autres pages ... -->
-    </aside>
+    <!-- Bannière en haut -->
+    <header class="admin-banner">
+        <a href=" / " class="banner-button">
+        <div class="banner-logo">
+            <img src="/static/images/icones/admin.png" alt="FMP Logo">
+            <h1>FMP Admin</h1>
+        </div>
+        </a>
+        <div class="banner-actions">
+            <a href="/admin/dashboard.html" class="banner-button">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="banner-button">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="banner-button">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/orders/index.html" class="banner-button">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="banner-button">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="/index.html" class="banner-button">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </header>
 
     <!-- Contenu principal -->
     <main class="admin-main">
-        <!-- En-tête -->
-        <header class="admin-header">
-            <div class="header-content">
-                <h2>Gestion des Catégories</h2>
-                <button
-                    class="btn btn-primary"
-                    onclick="categoriesManager.showCreateModal()"
-                >
-                    Nouvelle Catégorie
-                </button>
-            </div>
-        </header>
 
-        <!-- Liste des catégories -->
+
+    <section class="form-container">
+        <h2 class="header-content">Gestion des Catégories</h2>
         <section class="categories-section">
             <div class="categories-tree" id="categories-tree">
                 <!-- Arborescence des catégories injectée ici -->
@@ -146,6 +180,8 @@
     </template>
 
     <!-- Scripts -->
-    <script type="module" src="../../static/js/categories.js"></script>
+    <script type="module" src="/static/js/session.js"></script>
+    <script type="module" src="/static/js/categories.js"></script>
+    <script type="module" src="/static/js/route-guard.js"></script>
 </body>
 </html>

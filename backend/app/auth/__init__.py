@@ -1,14 +1,14 @@
 # backend/app/auth/__init__.py
-
 """
 Module d'authentification.
 Contient toutes les fonctionnalités liées à l'authentification.
 """
 
-from flask import Blueprint
+# Ne pas créer de blueprints ici
+# Ils seront importés directement depuis les fichiers routes.py et admin_routes.py
 
-# Création du blueprint
-auth_bp = Blueprint('auth', __name__)
+from app.auth.routes import auth_bp
+from app.auth.admin_routes import admin_users_bp
 
-# Import des routes (après la création du blueprint pour éviter les imports circulaires)
-from . import routes
+# Export pour faciliter l'import
+__all__ = ['auth_bp', 'admin_users_bp']

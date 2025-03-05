@@ -1,0 +1,309 @@
+<!-- frontend/pages/products.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP - Nos Cartouches d'Imprimante Compatibles</title>
+    <meta name="description" content="Découvrez notre large gamme de cartouches d'imprimantes. Compatibles et originales pour toutes les marques.">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/products.css">
+</head>
+<body>
+    <!-- En-tête (identique à index.html) -->
+    <header class="main-header">
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <!-- C'est ici que le contenu sera injecté -->
+            </ul>
+        </nav>
+        <!-- À la fin du fichier -->
+        <script src="/static/js/auth.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                checkLoginStatus();
+            });
+        </script>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+
+        <!-- Navigation Principale -->
+        <nav class="main-nav">
+            <div class="container">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="/" data-path="">
+                        <img src="/static/images/banners/logo_FMP.jpg" alt="FMP Logo">
+                    </a>
+                </div>
+
+                <!-- Barre de recherche -->
+                <div class="search-bar">
+                    <form id="search-form">
+                        <input type="text"
+                               id="search-input"
+                               name="q"
+                               placeholder="Rechercher une cartouche..."
+                               autocomplete="off">
+                        <button type="submit">
+                            <i class="icon search-icon"></i>
+                        </button>
+                    </form>
+                </div>
+
+                            <!-- User Navigation -->
+            <div class="user-nav">
+                <!-- Ces liens seront gérés par le JavaScript -->
+                <a href="/login" id="login-link">
+                    <i class="icon user-icon"></i>
+                    Connexion
+                </a>
+                <a href="/register" id="register-link">
+                    Inscription
+                </a>
+                <!-- Menu utilisateur (affiché après connexion) -->
+                <div id="user-menu" style="display: none;"></div>
+            </div>
+
+                <!-- Panier -->
+                <div class="cart-widget">
+                    <a href="/cart" data-path="cart" class="cart-link">
+                        <i class="icon cart-icon"></i>
+                        <span class="cart-count" id="cart-count">0</span>
+                        <span class="cart-total" id="cart-total">0,00 €</span>
+                        <img src="/static/images/icones/caddie.png" alt="Caddie-Icone" class="caddie-icon">
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="products-page">
+        <div class="container">
+            <!-- Fil d'Ariane -->
+            <nav class="breadcrumb">
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li>Cartouches</li>
+                </ul>
+            </nav>
+
+            <!-- En-tête de la page -->
+            <div class="page-header">
+                <h1>Nos Cartouches d'Imprimante</h1>
+                <div class="view-options">
+                    <!-- Options d'affichage -->
+                    <div class="display-mode">
+                        <button
+                            class="view-btn active"
+                            data-view="grid"
+                            onclick="productsManager.changeView('grid')"
+                        >
+                            <i class="icon grid-icon"></i>
+                        </button>
+                        <button
+                            class="view-btn"
+                            data-view="list"
+                            onclick="productsManager.changeView('list')"
+                        >
+                            <i class="icon list-icon"></i>
+                        </button>
+                    </div>
+                    <!-- Tri -->
+                    <select
+                        id="sort-select"
+                        onchange="productsManager.changeSort(this.value)"
+                    >
+                        <option value="popularity">Popularité</option>
+                        <option value="price_asc">Prix croissant</option>
+                        <option value="price_desc">Prix décroissant</option>
+                        <option value="name_asc">Nom A-Z</option>
+                        <option value="name_desc">Nom Z-A</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Zone principale -->
+            <div class="products-layout">
+                <!-- Filtres -->
+                <aside class="filters-sidebar">
+                    <div class="filters-header">
+                        <h2>Filtres</h2>
+                        <button
+                            class="clear-filters"
+                            onclick="productsManager.clearFilters()"
+                        >
+                            Réinitialiser
+                        </button>
+                    </div>
+
+                    <!-- Prix -->
+                    <div class="filter-group">
+                        <h3>Prix</h3>
+                        <div class="price-range">
+                            <input
+                                type="range"
+                                id="price-range"
+                                min="0"
+                                max="100"
+                                step="5"
+                                value="100"
+                                oninput="productsManager.updatePriceFilter(this.value)"
+                            >
+                            <div class="price-inputs">
+                                <input
+                                    type="number"
+                                    id="min-price"
+                                    placeholder="Min"
+                                    min="0"
+                                >
+                                <span>-</span>
+                                <input
+                                    type="number"
+                                    id="max-price"
+                                    placeholder="Max"
+                                    min="0"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Marques -->
+                    <div class="filter-group">
+                        <h3>Marques</h3>
+                        <div class="filter-search">
+                            <input
+                                type="text"
+                                placeholder="Rechercher une marque"
+                                oninput="productsManager.filterBrands(this.value)"
+                            >
+                        </div>
+                        <div class="checkbox-list" id="brands-list">
+                            <!-- Les marques seront injectées ici -->
+                        </div>
+                    </div>
+
+                    <!-- Catégories -->
+                    <div class="filter-group">
+                        <h3>Catégories</h3>
+                        <div class="checkbox-list" id="categories-list">
+                            <!-- Les catégories seront injectées ici -->
+                        </div>
+                    </div>
+
+                    <!-- Disponibilité -->
+                    <div class="filter-group">
+                        <h3>Disponibilité</h3>
+                        <label class="checkbox-label">
+                            <input
+                                type="checkbox"
+                                id="in-stock-only"
+                                onchange="productsManager.toggleInStock(this.checked)"
+                            >
+                            En stock uniquement
+                        </label>
+                    </div>
+                </aside>
+
+                <!-- Liste des produits -->
+                <div class="products-content">
+                    <!-- Résumé des filtres actifs -->
+                    <div class="active-filters" id="active-filters">
+                        <!-- Les filtres actifs seront injectés ici -->
+                    </div>
+
+                    <!-- Grille des produits -->
+                    <div
+                        class="products-grid"
+                        id="products-container"
+                        data-view="grid"
+                    >
+                        <!-- Les produits seront injectés ici -->
+                    </div>
+
+                    <!-- Message "Aucun produit" -->
+                    <div
+                        class="no-products"
+                        id="no-products"
+                        style="display: none;"
+                    >
+                        <i class="icon search-icon"></i>
+                        <h3>Aucun produit trouvé</h3>
+                        <p>Essayez de modifier vos filtres de recherche</p>
+                        <button
+                            class="btn"
+                            onclick="productsManager.clearFilters()"
+                        >
+                            Réinitialiser les filtres
+                        </button>
+                    </div>
+
+                    <!-- Loader -->
+                    <div
+                        class="products-loader"
+                        id="products-loader"
+                        style="display: none;"
+                    >
+                        <div class="loader"></div>
+                        <p>Chargement des produits...</p>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" id="pagination">
+                        <!-- La pagination sera injectée ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pied de page (identique à index.html) -->
+    <footer class="main-footer">
+        <!-- ... contenu du pied de page ... -->
+    </footer>
+
+    <!-- Templates -->
+    <template id="product-card-template">
+        <div class="product-card">
+            <div class="product-image">
+                <img src="" alt="">
+                <div class="product-badges">
+                    <span class="badge new-badge">Nouveau</span>
+                    <span class="badge sale-badge">Promo</span>
+                </div>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">
+                    <a href=""></a>
+                </h3>
+                <div class="product-brand"></div>
+                <div class="product-price">
+                    <span class="current-price"></span>
+                    <span class="original-price"></span>
+                    <span class="discount-tag"></span>
+                </div>
+                <div class="product-stock"></div>
+            </div>
+            <div class="product-actions">
+                <button class="add-to-cart-btn">
+                    Ajouter au panier
+                </button>
+                <button class="quick-view-btn">
+                    <i class="icon eye-icon"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script type="module" src="/static/js/main.js"></script>
+    <script type="module" src="/static/js/products.js"></script>
+</body>
+</html>

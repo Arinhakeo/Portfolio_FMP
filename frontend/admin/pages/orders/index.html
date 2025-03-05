@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Gestion des Commandes</title>
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <link rel="stylesheet" href="/static/css/css_admin/forms.css">
+    <script type="module">
+        import { session } from '/static/js/session.js';
+        
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            
+            if (!session.isAuthenticated() || !userData?.is_admin) {
+                window.location.href = '/login';
+                throw new Error('Accès non autorisé');
+            }
+        });
+    </script>
+    <!-- Vérification admin -->
+    <script type="module">
+        import { session } from '/static/js/session.js';
+        
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            console.log("Données utilisateur:", userData);
+            
+            if (!session.isAuthenticated()) {
+                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
+            if (!userData?.is_admin) {
+                window.location.href = '/pages/login.html?message=admin_required';
+                return;
+            }
+        });
+    </script>
+</head>
+    <!-- Bannière en haut -->
+    <header class="admin-banner">
+        <a href=" / " class="banner-button">
+        <div class="banner-logo">
+            <img src="/static/images/icones/admin.png" alt="FMP Logo">
+            <h1>FMP Admin</h1>
+        </div>
+        </a>
+        <div class="banner-actions">
+            <a href="/admin/dashboard.html" class="banner-button">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="banner-button">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/categories/index.html" class="banner-button">
+                <img src="/static/images/icones/categories.png" alt="Catégories">
+                <span>Catégories</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="banner-button">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="banner-button">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="/index.html" class="banner-button">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </header>
+<body>
+    <!-- Menu latéral admin -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <h1>FMP Admin</h1>
+        </div>
+        <nav class="admin-nav">
+            <ul>
+                <li>
+                    <a href="../dashboard.html">
+                        <i class="icon dashboard-icon"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="../products/index.html">
+                        <i class="icon products-icon"></i>
+                        Produits
+                    </a>
+                </li>
+                <li>
+                    <a href="../categories/index.html">
+                        <i class="icon categories-icon"></i>
+                        Catégories
+                    </a>
+                </li>
+                <li>
+                    <a href="../brands/index.html">
+                        <i class="icon brands-icon"></i>
+                        Marques
+                    </a>
+                </li>
+                <li>
+                    <a href="./index.html" class="active">
+                        <i class="icon orders-icon"></i>
+                        Commandes
+                    </a>
+                </li>
+                <li>
+                    <a href="../users/index.html">
+                        <i class="icon users-icon"></i>
+                        Utilisateurs
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <h2>Gestion des Commandes</h2>
+            <div class="filters">
+                <select id="status-filter">
+                    <option value="">Tous les statuts</option>
+                    <option value="pending">En attente</option>
+                    <option value="processing">En traitement</option>
+                    <option value="shipped">Expédiée</option>
+                    <option value="delivered">Livrée</option>
+                    <option value="cancelled">Annulée</option>
+                </select>
+                <input
+                    type="text"
+                    id="search-order"
+                    placeholder="Rechercher une commande..."
+                >
+            </div>
+        </header>
+
+        <!-- Liste des commandes -->
+        <section class="orders-list">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Produits</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table">
+                    <!-- Les commandes seront injectées ici -->
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- La pagination sera injectée ici -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="/admin/static/js/js_admin/orders.js"></script>
+    <script type="module" src="/static/js/route-guard.js"></script>
+</body>
+</html>

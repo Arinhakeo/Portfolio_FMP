@@ -1,51 +1,110 @@
-/* frontend/static/css/profile.css */
+/* =========================================================================== */
+/*                              En-tête                                        */
+/* =========================================================================== */
 
-/* Layout principal */
-.profile-container {
-    display: grid;
-    grid-template-columns: 250px 1fr;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-/* Barre latérale */
-.profile-sidebar {
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
+    margin: auto;
 }
 
-.profile-nav ul {
-    list-style: none;
-    padding: 0;
+.top-bar {
+    background: var(--light-gray);
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo img {
+    height: 80px;
+    width: auto;
+}
+
+.title-profil h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.cart-widget {
+    position: relative;
+    margin: auto 20px;
+}
+
+.cart-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.cart-link:hover {
+    background: var(--light-gray);
+}
+
+.caddie-icon {
+    height: 50px;
+    width: auto;
+}
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* =========================================================================== */
+/*                              Profil                                         */
+/* =========================================================================== */
+
+.profile-container {
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.profile-nav {
+    display: flex;
+    justify-content: space-around;
+    background: #cad5e2;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .profile-nav a {
-    display: block;
-    padding: 1rem;
-    color: #333;
+    color: white;
     text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
+    padding: 10px;
+    font-weight: bold;
 }
 
-.profile-nav a:hover,
 .profile-nav a.active {
-    background-color: #f0f7ff;
-    color: var(--primary-color);
-    border-right: 3px solid var(--primary-color);
+    border-bottom: 2px solid white;
 }
-
-/* Contenu principal */
-.profile-content {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 2rem;
+h3 {
+    background-color: rgba(201, 200, 200, 0.442);
+    margin-bottom: 10px;
 }
-
-/* Sections */
 .profile-section {
     display: none;
 }
@@ -54,119 +113,59 @@
     display: block;
 }
 
-.profile-section h2 {
-    margin-bottom: 1.5rem;
-    color: var(--primary-color);
-}
-
-/* Formulaires */
-.profile-form {
-    max-width: 600px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
+form label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
+    margin: 10px 0;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="tel"] {
+input {
     width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.form-group input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-    outline: none;
+.main-address {
+    max-width: 1200px;
+    padding: 20px;
+    background: #ffffff;
 }
 
-/* Boutons */
-.save-button {
-    background: var(--primary-color);
+.button {
+    background: #007bff;
     color: white;
+    padding: 10px;
     border: none;
-    padding: 0.8rem 1.5rem;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    width: 100%;
 }
 
-.save-button:hover {
-    background: #2980b9;
+button:hover {
+    background: #228dff;
 }
 
-/* Liste des commandes */
-.orders-list {
-    display: grid;
-    gap: 1rem;
-}
-
-.order-card {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-}
-
-.order-header {
+.address-list {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.order-status {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+.address-card {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
 }
 
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
+.orders-list, .favorites-list {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-.status-shipped {
-    background: #d4edda;
-    color: #155724;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .profile-container {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-sidebar {
-        margin-bottom: 1rem;
-    }
-
-    .profile-nav ul {
-        display: flex;
-        overflow-x: auto;
-    }
-
-    .profile-nav a {
-        white-space: nowrap;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+.no-orders-message, .no-favorites-message {
+    text-align: center;
+    color: #888;
 }

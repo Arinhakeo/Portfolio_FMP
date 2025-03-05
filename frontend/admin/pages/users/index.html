@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Gestion des utilisateurs</title>
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <link rel="stylesheet" href="/static/css/css_admin/users.css">
+</head>
+<body>
+    <!-- Header fixe -->
+    <header class="admin-header">
+        <div class="header-logo">
+            <a href="/admin/pages/dashboard.html">
+                <img src="/static/images/icones/admin.png" alt="Logo FMP Admin">
+                <h1>FMP Admin</h1>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/admin/pages/dashboard.html" class="nav-link">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="nav-link">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/categories/index.html" class="nav-link">
+                <img src="/static/images/icones/categories.png" alt="Catégories">
+                <span>Catégories</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="nav-link">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/orders/index.html" class="nav-link">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="nav-link active">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="#" id="logout-btn" class="nav-link">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <!-- En-tête de la page -->
+        <section class="welcome-panel">
+            <div class="welcome-content">
+                <h2>Gestion des utilisateurs</h2>
+                <p class="subtitle">Gérer les comptes utilisateurs, les permissions et les statuts.</p>
+            </div>
+            <div>
+                <button id="add-user-btn" class="btn btn-primary">Ajouter un utilisateur</button>
+            </div>
+        </section>
+
+        <!-- Filtres et recherche -->
+        <div class="admin-filters">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Rechercher un utilisateur...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Tableau des utilisateurs -->
+        <div class="table-container">
+            <table class="admin-table" id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Statut</th>
+                        <th>Admin</th>
+                        <th>Inscrit le</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-list">
+                    <!-- Les données seront chargées en JS -->
+                    <tr>
+                        <td colspan="7" class="center">Chargement des utilisateurs...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Contrôles de pagination générés en JS -->
+        </div>
+
+        <!-- Message de notification -->
+        <div id="notification" class="notification" style="display:none;"></div>
+    </main>
+
+    <!-- Modal pour ajouter/modifier un utilisateur -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Ajouter un utilisateur</h2>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstname">Prénom</label>
+                        <input type="text" id="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Nom</label>
+                        <input type="text" id="lastname" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password">
+                    <small>Laissez vide pour générer automatiquement un mot de passe</small>
+                </div>
+                
+                <div class="form-checkboxes">
+                    <div class="form-check">
+                        <input type="checkbox" id="is-active" checked>
+                        <label for="is-active">Compte actif</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="is-admin">
+                        <label for="is-admin">Administrateur</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="is-verified">
+                        <label for="is-verified">Email vérifié</label>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+            
+            <!-- Affichage du mot de passe généré -->
+            <div id="password-generated" class="success-message" style="display:none;">
+                <h3>Utilisateur créé avec succès!</h3>
+                <p>Un mot de passe a été généré automatiquement:</p>
+                <div class="password-box">
+                    <code id="generated-password"></code>
+                    <button id="copy-password" class="btn btn-small">Copier</button>
+                </div>
+                <p class="warning">Conservez ce mot de passe, il ne sera plus affiché.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirmation de suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer cet utilisateur?</p>
+            
+            <div class="form-check">
+                <input type="checkbox" id="hard-delete">
+                <label for="hard-delete">Suppression définitive (sinon, le compte sera simplement désactivé)</label>
+            </div>
+            
+            <div class="form-buttons">
+                <button class="btn btn-secondary close-modal">Annuler</button>
+                <button id="confirm-delete" class="btn btn-danger">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script>
+        // Définition globale de l'URL de l'API
+        const API_URL = 'http://127.0.0.1:5000';
+
+        // Fonction pour obtenir le token d'authentification
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+    </script>
+    <script src="/static/js/js_admin/users.js"></script>
+</body>
+</html>

@@ -1,114 +1,235 @@
 /* frontend/static/css/home.css */
+/* =========================================================================== */
+/*                              Variables CSS                                  */
+/* =========================================================================== */
 
-/* Variables CSS */
 :root {
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
-    --text-color: #2c3e50;
-    --light-gray: #f5f7fa;
-    --border-color: #e1e8ed;
-    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --primary-color: #3498db; /* Couleur principale */
+    --secondary-color: #2ecc71; /* Couleur secondaire */
+    --text-color: #2c3e50; /* Couleur du texte */
+    --light-gray: #f5f7fa; /* Couleur de fond gris clair */
+    --border-color: #e1e8ed; /* Couleur des bordures */
+    --shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre légère */
 }
 
-/* En-tête */
+/* =========================================================================== */
+/*                              En-tête                                        */
+/* =========================================================================== */
+
 .main-header {
-    position: sticky;
+    position: sticky; /* En-tête fixe en haut de la page */
     top: 0;
-    z-index: 100;
-    background: white;
-    box-shadow: var(--shadow);
-    margin: auto;
+    z-index: 100; /* Assure que l'en-tête est au-dessus des autres éléments */
+    background: white; /* Fond blanc */
+    box-shadow: var(--shadow); /* Ombre portée */
+    margin: auto; /* Centrage horizontal */
 }
 
-/* Top Bar */
+/* =========================================================================== */
+/*                              Barre supérieure (Top Bar)                     */
+/* =========================================================================== */
+
 .top-bar {
-    background: var(--light-gray);
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
-    margin-left: 10px;
-    margin-right: 10px;
+    background: var(--light-gray); /* Fond gris clair */
+    padding: 0.5rem 0; /* Espacement interne */
+    font-size: 0.9rem; /* Taille de la police */
+    margin-left: 10px; /* Marge à gauche */
+    margin-right: 10px; /* Marge à droite */
 }
 
 .top-bar .container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Espace entre les éléments */
+    align-items: center; /* Centre verticalement */
+    padding: 0 20px; /* Espacement horizontal */
 }
+/* =========================================================================== */
+/*                         Navigation principale                               */
+/* =========================================================================== */
 
-.contact-info {
-    display: flex;
-    gap: 1.5rem;
-}
-
-.contact-info a {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-color);
-    text-decoration: none;
-}
-
-.user-nav {
-    display: flex;
-    gap: 1rem;
-    
-}
-
-.user-nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.user-nav a:hover {
-    color: var(--primary-color);
-}
-
-/* Navigation Principale */
 .main-nav {
     width: 100%;
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid var(--border-color);
-    margin: 10px;
+    border-bottom: 1px solid var(--border-color); /* Bordure en bas */
+    margin: 10px; /* Marge externe */
 }
 
 .main-nav .container {
-    display: align-items;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 0;
     margin: 0;
     grid-template-columns: auto 1fr auto;
-    gap: 2rem;
-    align-items: center;
+    gap: 2rem; /* Espace entre les éléments */
 }
+
+/* =========================================================================== */
+/*              Conteneur des liens de connexion et d'inscription              */
+/* =========================================================================== */
+
+#auth-container {
+    display: flex;
+    margin-left: auto; /* Pousse le conteneur à droite */
+    align-items: center;
+    gap: 10px; /* Espace entre les éléments */
+}
+
+/* =========================================================================== */
+/*                           Icônes dans les liens                             */
+/* =========================================================================== */
+
+.auth-link .icon {
+    margin-right: 8px; /* Espace entre l'icône et le texte */
+    font-size: 0.5em; /* Taille de l'icône */
+}
+
+/* =========================================================================== */
+/*            Conteneur des boutons "Mon Compte" et "Déconnexion"              */
+/* =========================================================================== */
+
+#user-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espace entre les boutons */
+    margin-left: auto; /* Pousse le conteneur à droite */
+}
+.auth-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Supprime le soulignement */
+    color: #333; /* Couleur du texte */
+    font-size: 15px; /* Taille de la police */
+    padding: 8px 12px; /* Espacement interne */
+    transition: background-color 0.2s ease; /* Transition fluide */
+}
+
+.auth-link:hover {
+    background-color: #0099b4; /* Couleur de fond au survol */
+    border-radius: 20px; /* Bordures arrondies */
+    text-decoration: none; /* Supprime le soulignement au survol */
+}
+
+/* =========================================================================== */
+/*                   Boutons "Mon Compte" et "Déconnexion"                     */
+/* =========================================================================== */
+
+.nav-button {
+    background: none; /* Pas de fond */
+    border: 1px; /* Pas de bordure */
+    color: #1b49ac; /* Couleur du texte */
+    cursor: pointer; /* Curseur en forme de main */
+    display: flex;
+    align-items: center;
+    padding: 8px 12px; /* Espacement interne */
+    font-size: 15px; /* Taille de la police */
+    transition: background-color 0.3s ease; /* Transition fluide */
+}
+
+.nav-button:hover {
+    background-color: #0099b4; /* Couleur de fond au survol */
+    border-radius: 20px; /* Bordures arrondies */
+}
+
+#user-nav img {
+    width: 24px; /* Largeur de l'icône */
+    height: 24px; /* Hauteur de l'icône */
+    vertical-align: middle; /* Alignement vertical */
+    margin-right: 20px;
+}
+
+/* =========================================================================== */
+/*                         Icônes dans les boutons                             */
+/* =========================================================================== */
+
+.nav-button .icon {
+    margin-right: 20px; /* Espace entre l'icône et le texte */
+    size: 3px; /* Taille de l'icône */
+
+}
+
+/* =========================================================================== */
+/*                             Menu utilisateur                                */
+/* =========================================================================== */
+
+.user-nav {
+    display: flex;
+    gap: 1rem; /* Espace entre les éléments */
+}
+
+.user-nav a {
+    color: var(--text-color); /* Couleur du texte */
+    text-decoration: none; /* Supprime le soulignement */
+    transition: color 0.3s; /* Transition fluide */
+}
+
+.user-nav a:hover {
+    color: var(--primary-color); /* Couleur au survol */
+}
+
+/* =========================================================================== */
+/*                         Navigation principale                               */
+/* =========================================================================== */
+
+.main-nav {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color); /* Bordure en bas */
+    margin: 10px; /* Marge externe */
+}
+
+.main-nav .container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    grid-template-columns: auto 1fr auto;
+    gap: 2rem; /* Espace entre les éléments */
+}
+
+/* =========================================================================== */
+/*                               Logo FMP                                      */
+/* =========================================================================== */
 
 .logo img {
-    height: 50px;
-    width: auto;
+    height: 80px; /* Hauteur du logo */
+    width: auto; /* Largeur automatique */
 }
 
-/* Barre de recherche */
-.search-bar {
-    max-width: 600px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+/* =========================================================================== */
+/*                             BARRE DE RECHERCHE                              */
+/* =========================================================================== */
 
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #4963f8;
+    border-radius: 20px;
+    padding: 5px 10px;
+    width: 60%; /* Largeur de la barre de recherche */
+    max-width: 800px; /* Largeur maximale */
+    margin: 0 auto; /* Centre la barre de recherche */
+    height: 50px; /* Hauteur réduite */
 }
 
 .search-bar form {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.5rem; /* Espace entre l'input et le bouton */
+    width: 100%; /* Prend toute la largeur du conteneur */
+    align-items: center; /* Centre verticalement les éléments */
 }
 
 .search-bar input {
-    flex: 1;
+    flex: 1; /* Prend tout l'espace disponible */
     padding: 0.8rem;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
     font-size: 1rem;
     transition: border-color 0.3s;
+    height: 40px; /* Hauteur réduite */
 }
 
 .search-bar input:focus {
@@ -117,20 +238,20 @@
 }
 
 .search-bar button {
-    padding: 0 1.5rem;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
+    padding: 8px; /* Espacement interne */
+    background: none; /* Pas de fond */
+    border: none; /* Pas de bordure */
+    cursor: pointer; /* Curseur en forme de main */
 }
 
-.search-bar button:hover {
-    background: #2980b9;
+.search-bar button img {
+    width: 30px; /* Largeur de l'icône réduite */
+    height: 30px; /* Hauteur de l'icône réduite */
+    vertical-align: middle; /* Alignement vertical */
 }
-
-/* Widget Panier */
+/* =========================================================================== */
+/*                              Widget Panier                                  */
+/* =========================================================================== */
 
 .caddie-icon {
     height: 50px;
@@ -140,6 +261,7 @@
 .cart-widget {
     position: relative;
     margin: auto 20px auto 20px;
+
 }
 
 .cart-link {
@@ -170,7 +292,10 @@
     text-align: center;
 }
 
-/* Menu Catégories */
+/* =========================================================================== */
+/*                             Menu Catégories                                 */
+/* =========================================================================== */
+
 .category-nav ul {
     display: flex;
     gap: 2rem;
@@ -189,7 +314,11 @@
 .category-nav a:hover {
     color: var(--primary-color);
 }
-/* Conteneur de la bannière défilante */
+
+/* =========================================================================== */
+/*                              Bannière Défilante                             */
+/* =========================================================================== */
+
 .background-banner {
     width: 100%;
     overflow: hidden; /* Cache le texte qui dépasse */
@@ -202,97 +331,109 @@
 /* Texte défilant */
 .scrolling-text {
     display: inline-block;
-    padding-left: 100%; /* Démarre le texte hors de l'écran */
+    padding-right: 100%; /* Démarre le texte hors de l'écran (à gauche) */
     animation: scroll-text 15s linear infinite;
 }
 
 .scrolling-text p {
     margin: 0;
-    font-size: 14px;
+    font-size: 30px;
     color: #333; /* Couleur du texte */
 }
 
 /* Animation */
 @keyframes scroll-text {
     from {
-        transform: translateX(100%); /* Démarre à droite */
+        transform: translateX(100%); /* Démarre à gauche */
     }
     to {
-        transform: translateX(-100%); /* Se termine à gauche */
+        transform: translateX(-100%); /* Se termine à droite */
     }
 }
-/* Slider Principal */
+/* =========================================================================== */
+/*                              Slider Principal                               */
+/* =========================================================================== */
+
 .hero-slider {
-    position: relative;
-    margin-bottom: 3rem;
-    margin: auto;
+    position: relative; /* Position relative pour les éléments enfants absolus */
+    margin-bottom: 3rem; /* Marge en bas */
 }
 
 .slider-container {
-    position: relative;
-    height: 400px;
-    overflow: hidden;
+    position: relative; /* Position relative pour les slides */
+    height: 500px; /* Hauteur fixe du conteneur */
+    overflow: hidden; /* Cache les slides hors du conteneur */
 }
 
 .slide {
-    position: absolute;
+    position: absolute; /* Position absolue pour superposer les slides */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s;
+    opacity: 0; /* Masque les slides inactives */
+    transition: opacity 0.5s; /* Transition fluide pour l'opacité */
 }
 
 .slide.active {
-    opacity: 1;
+    opacity: 1; /* Affiche la slide active */
 }
 
 .slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Ajuste l'image pour couvrir tout l'espace */
 }
 
 .slide-content {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    transform: translateY(-50%);
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    position: absolute; /* Position absolue pour placer le contenu */
+    top: 50%; /* Centre verticalement */
+    left: 10%; /* Décalage à gauche */
+    transform: translateY(-50%); /* Ajuste le centrage vertical */
+    color: rgb(204, 7, 7); /* Couleur du texte */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Ombre portée pour le texte */
 }
 
 .slide-content h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 2.5rem; /* Taille de la police */
+    margin-bottom: 1rem; /* Marge en bas */
 }
 
 .slider-controls button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
+    background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    color: white; /* Couleur des flèches */
     border: none;
     padding: 1rem;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 1.5rem; /* Taille des flèches */
+    border-radius: 50%; /* Boutons ronds */
+    width: 40px; /* Largeur fixe */
+    height: 40px; /* Hauteur fixe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .slider-controls button:hover {
-    background: rgba(0,0,0,0.7);
+    background: hsl(226, 84%, 53%); /* Fond plus foncé au survol */
 }
 
 .slider-controls .prev-btn {
-    left: 20px;
+    left: 20px; /* Position du bouton précédent */
 }
 
 .slider-controls .next-btn {
-    right: 20px;
+    right: 20px; /* Position du bouton suivant */
 }
+/* script javaScript*/
+/*============================================================================ */
+/*                                 Avantages                                   */
+/* =========================================================================== */
 
-/* Avantages */
 .features {
     padding: 1em 0;
     background: white;
@@ -322,47 +463,73 @@
 .feature-item p {
     color: #666;
 }
+/* =========================================================================== */
+/*                                 Avantages                                   */
+/* =========================================================================== */
 
-/* Catégories Populaires */
+.features {
+    padding: 1em 0; /* Espacement interne */
+    background: white; /* Fond blanc */
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes de largeur égale */
+    gap: 2rem; /* Espace entre les éléments */
+}
+
+.feature-item {
+    text-align: center; /* Centrage du texte */
+}
+
+.feature-item i {
+    font-size: 2.5rem; /* Taille de l'icône */
+    color: var(--primary-color); /* Couleur principale */
+    margin-bottom: 1rem; /* Marge en bas */
+}
+
+.feature-item h3 {
+    margin-bottom: 0.5rem; /* Marge en bas */
+    color: var(--text-color); /* Couleur du texte */
+}
+
+.feature-item p {
+    color: #666; /* Couleur du texte secondaire */
+}
+
+/* =========================================================================== */
+/*                          Catégories Populaires                              */
+/* =========================================================================== */
+
 .popular-categories {
-    font-size: 3rem;
-    font-weight: 600;
-    padding : 0 20px;
-    background: var(--light-gray);
+    background: var(--light-gray); /* Fond gris clair */
+    padding: 0 20px; /* Espacement interne horizontal */
 }
 
 .section-title {
-    margin-top: 2rem;
-    text-align: center;
-    text-size-adjust: 1.5rem;
-    margin-bottom: 2rem;
-    color: var(--text-color);
-    font-size: 3rem;
-    font-weight: 600;
+    margin-top: 2rem; /* Marge en haut */
+    margin-bottom: 2rem; /* Marge en bas */
+    text-align: center; /* Centrage du texte */
+    color: var(--text-color); /* Couleur du texte */
+    font-size: 3rem; /* Taille de la police */
+    font-weight: 600; /* Poids de la police */
 }
 
 .category-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 2rem 0;
-}
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 2rem 0;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes de largeur égale */
+    gap: 2rem; /* Espace entre les éléments */
+    padding: 2rem 0; /* Espacement interne vertical */
 }
 
 /* Style de base pour les cartes de catégorie */
 .category-card {
     position: relative;
-    height: 300px;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Transition douce */
-    cursor: pointer;
+    height: 300px; /* Hauteur fixe */
+    border-radius: 10px; /* Bordures arrondies */
+    overflow: hidden; /* Cache le contenu débordant */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
+    cursor: pointer; /* Curseur en forme de main */
 }
 
 /* Style de l'image de fond */
@@ -372,21 +539,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    opacity: 0.8;
-}
-/* Overlay plus foncé pour améliorer la lisibilité */
-.category-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Overlay noir semi-transparent */
-    z-index: 1;
+    object-fit: cover; /* Ajuste l'image pour couvrir tout l'espace */
+    opacity: 0.8; /* Opacité réduite */
 }
 
+/* Overlay pour améliorer la lisibilité */
 .category-card::before {
     content: '';
     position: absolute;
@@ -394,47 +551,91 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
-    z-index: 2;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); /* Dégradé noir */
+    z-index: 2; /* Au-dessus de l'image de fond */
 }
 
+/* Effet au survol */
 .category-card:hover {
-    transform: scale(2);
-    transform: translateY(-20px); /* Déplacement vers le haut */
     transform: translateY(-5px); /* Déplacement vers le haut */
-    box-shadow: 0 10px 20px rgb(8, 122, 79); /* Ombre plus prononcée */
-    background-color: rgba(219, 52, 52, 0.2); /* Fond bleu plus marqué */
+    box-shadow: 0 10px 20px rgba(8, 122, 79, 0.5); /* Ombre portée */
 }
 
 /* Contenu (titre et description) */
 .category-card__content {
-    position: relative; /* Changé de absolute à relative */
-    z-index: 80; /* Z-index plus élevé que l'overlay */
+    position: relative; /* Position relative pour le contenu */
+    z-index: 3; /* Au-dessus de l'overlay */
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    text-align: center;
-    color: rgb(255, 255, 255);
+    justify-content: center; /* Centrage vertical */
+    align-items: center; /* Centrage horizontal */
+    padding: 2rem; /* Espacement interne */
+    text-align: center; /* Centrage du texte */
+    color: white; /* Couleur du texte */
 }
 
 .category-card__title {
-    font-size: 3rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: rgb(255, 255, 255);
-    text-shadow: 10px 1px 2px black; /* Ombre légère pour la lisibilité */
+    font-size: 2rem; /* Taille de la police */
+    font-weight: 600; /* Poids de la police */
+    margin-bottom: 0.5rem; /* Marge en bas */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Ombre portée */
 }
 
 .category-card__description {
-    font-size: 1.5rem;
-    color: white;                      /* Texte en blanc */
-    text-shadow: 1px 1px 2px black;    /* Ombre légère pour la lisibilité */
+    font-size: 1.2rem; /* Taille de la police */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Ombre portée */
 }
 
-/* Responsive */
+/* =========================================================================== */
+/*                          Produits par Marques                               */
+/* =========================================================================== */
+
+.brands-products {
+    background: var(--light-gray); /* Fond gris clair */
+    padding: 0 20px; /* Espacement interne horizontal */
+}
+
+.brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Grille flexible */
+    gap: 1rem; /* Espace entre les éléments */
+    padding: 2rem 0; /* Espacement interne vertical */
+}
+
+/* Style de base pour les cartes de marque */
+.brand-card {
+    position: relative;
+    width: 120px; /* Largeur fixe */
+    height: 50px; /* Hauteur réduite pour les logos */
+    border-radius: 10px; /* Bordures arrondies */
+    overflow: hidden; /* Cache le contenu débordant */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
+    cursor: pointer; /* Curseur en forme de main */
+    background: white; /* Fond blanc pour les logos */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Espacement interne */
+}
+
+/* Style de l'image de fond */
+.brand-card__bg {
+    max-width: 100%; /* Largeur maximale */
+    max-height: 100%; /* Hauteur maximale */
+    object-fit: contain; /* Ajuste l'image pour contenir tout l'espace */
+}
+
+/* Effet au survol */
+.brand-card:hover {
+    transform: translateY(-5px); /* Déplacement vers le haut */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Ombre portée légère */
+}
+
+/* =========================================================================== */
+/*                              Responsive                               */
+/* =========================================================================== */
+
 @media (max-width: 768px) {
     .category-grid {
         grid-template-columns: 1fr;
@@ -445,8 +646,10 @@
         height: 250px;
     }
 }
+/* =========================================================================== */
+/*                              Produits en Vedette                               */
+/* =========================================================================== */
 
-/* Produits en Vedette */
 .featured-products {
     padding: 4rem 0;
 }
@@ -456,8 +659,10 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
 }
+/* =========================================================================== */
+/*                              Marques Partenaires                               */
+/* =========================================================================== */
 
-/* Marques Partenaires */
 .brands {
     padding: 4rem 0;
     background: var(--light-gray);
@@ -469,8 +674,10 @@
     overflow: hidden;
     padding: 1rem 0;
 }
+/* =========================================================================== */
+/*                              Newsletter                               */
+/* =========================================================================== */
 
-/* Newsletter */
 .newsletter {
     padding: 4rem 0;
     background: var(--primary-color);
@@ -518,8 +725,10 @@
 .newsletter .cta-button:hover {
     background: #27ae60;
 }
+/* =========================================================================== */
+/*                              Pied de page                               */
+/* =========================================================================== */
 
-/* Pied de page */
 .main-footer {
     background: #2c3e50;
     color: white;
@@ -580,8 +789,10 @@
     padding-top: 2rem;
     border-top: 1px solid rgba(255,255,255,0.1);
 }
+/* =========================================================================== */
+/*                              Boutons CTA                               */
+/* =========================================================================== */
 
-/* Boutons CTA */
 .cta-button {
     display: inline-block;
     padding: 1rem 2rem;
@@ -595,8 +806,10 @@
 .cta-button:hover {
     background: #2980b9;
 }
+/* =========================================================================== */
+/*                              Media Queries                               */
+/* =========================================================================== */
 
-/* Media Queries */
 @media (max-width: 1024px) {
     .feature-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -653,8 +866,10 @@
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================================== */
+/*                                Animations                                   */
+/* =========================================================================== */
 
-/* Animations */
 @keyframes slideIn {
     from {
         opacity: 0;

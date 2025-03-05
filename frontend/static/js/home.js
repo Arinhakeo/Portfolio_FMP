@@ -1,14 +1,17 @@
-// frontend/static/js/home.js
+// ===========================================================================
+//                              Gestionnaire de la Page d'Accueil
+// ===========================================================================
 
-/**
- * Gestionnaire de la page d'accueil
- */
 class HomeManager {
     constructor() {
-        this.currentSlide = 0;
-        this.autoPlayInterval = null;
-        this.initialize();
+        this.currentSlide = 0; // Slide actuelle du slider
+        this.autoPlayInterval = null; // Intervalle pour l'autoplay
+        this.initialize(); // Initialisation de la page
     }
+
+    // ===========================================================================
+    //                              Initialisation
+    // ===========================================================================
 
     /**
      * Initialisation des fonctionnalités de la page d'accueil
@@ -16,14 +19,18 @@ class HomeManager {
     async initialize() {
         // Initialisation du slider
         this.initializeSlider();
-        
+
         // Chargement des données
         await Promise.all([
-            this.loadFeaturedCategories(),
-            this.loadFeaturedProducts(),
-            this.loadBrands()
+            this.loadFeaturedCategories(), // Catégories mises en avant
+            this.loadFeaturedProducts(),   // Produits mis en avant
+            this.loadBrands()              // Marques partenaires
         ]);
     }
+
+    // ===========================================================================
+    //                              Gestion du Slider
+    // ===========================================================================
 
     /**
      * Initialise le slider principal
@@ -33,6 +40,7 @@ class HomeManager {
         const prevBtn = document.querySelector('.slider-controls .prev-btn');
         const nextBtn = document.querySelector('.slider-controls .next-btn');
         
+        // Événements pour les boutons précédent et suivant
         prevBtn.addEventListener('click', () => this.changeSlide(-1));
         nextBtn.addEventListener('click', () => this.changeSlide(1));
         
@@ -47,11 +55,12 @@ class HomeManager {
 
     /**
      * Change la slide active
+     * @param {number} direction - Direction de la navigation (-1 pour précédent, 1 pour suivant)
      */
     changeSlide(direction) {
         const slides = document.querySelectorAll('.slide');
         
-        // Retrait de la classe active
+        // Retrait de la classe active de la slide actuelle
         slides[this.currentSlide].classList.remove('active');
         
         // Calcul de la nouvelle slide
@@ -66,7 +75,7 @@ class HomeManager {
      */
     startAutoPlay() {
         this.autoPlayInterval = setInterval(() => {
-            this.changeSlide(1);
+            this.changeSlide(1); // Change de slide toutes les 5 secondes
         }, 5000);
     }
 
@@ -79,6 +88,10 @@ class HomeManager {
             this.autoPlayInterval = null;
         }
     }
+
+    // ===========================================================================
+    //                              Chargement des Données
+    // ===========================================================================
 
     /**
      * Charge les catégories mises en avant
@@ -127,7 +140,7 @@ class HomeManager {
                     </div>
                     <button
                         class="add-to-cart-btn"
-                        onclick="mainManager.addToCart(${product.id})"
+                        onclick="homeManager.addToCart(${product.id})"
                     >
                         Ajouter au panier
                     </button>
@@ -158,9 +171,62 @@ class HomeManager {
             console.error('Erreur chargement marques:', error);
         }
     }
-}
 
-// Initialisation
+    // ===========================================================================
+    //                              Fonctions Supplémentaires
+    // ===========================================================================
+
+    /**
+     * Ajoute un produit au panier
+     * @param {number} productId - ID du produit à ajouter
+     */
+    addToCart(productId) {
+        console.log(`Produit ${productId} ajouté au panier`);
+        // Ajoutez ici la logique pour ajouter un produit au panier
+    }
+}
+    // ===========================================================================
+    //                              Fonctions slide
+    // ===========================================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    let currentSlide = 0;
+
+    // Affiche la slide active
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) {
+                slide.classList.add('active');
+            }
+        });
+    }
+
+    // Slide précédente
+    prevBtn.addEventListener('click', () => {
+        currentSlide = (currentSlide > 0) ? currentSlide - 1 : slides.length - 1;
+        showSlide(currentSlide);
+    });
+
+    // Slide suivante
+    nextBtn.addEventListener('click', () => {
+        currentSlide = (currentSlide < slides.length - 1) ? currentSlide + 1 : 0;
+        showSlide(currentSlide);
+    });
+
+    // Affiche la première slide au chargement
+    showSlide(currentSlide);
+});
+
+// ===========================================================================
+//                              Initialisation
+// ===========================================================================
+
+// Crée une instance de HomeManager
 const homeManager = new HomeManager();
+
 // Rendre l'instance accessible globalement
 window.homeManager = homeManager;

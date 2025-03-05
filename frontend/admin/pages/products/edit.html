@@ -1,259 +1,326 @@
-<!-- frontend/admin/pages/products/edit.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMP Admin - Édition Produit</title>
-    <link rel="stylesheet" href="../../static/css/admin.css">
-    <link rel="stylesheet" href="../../static/css/forms.css">
+    <title>FMP Admin - Édition de Produit</title>
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <link rel="stylesheet" href="/static/css/css_admin/forms.css">
     
     <!-- Vérification admin -->
     <script type="module">
-        import { session } from '../../../static/js/session.js';
-        const userData = session.getUserData();
-        if (!userData?.is_admin) {
-            window.location.href = '/login.html';
-        }
+        import { session } from '/static/js/session.js';
+        
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            console.log("Données utilisateur:", userData);
+            
+            if (!session.isAuthenticated()) {
+                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
+            if (!userData?.is_admin) {
+                window.location.href = '/pages/login.html?message=admin_required';
+                return;
+            }
+        });
     </script>
 </head>
 <body>
-    <!-- Menu latéral admin (comme dans index.html) -->
-    <aside class="admin-sidebar">
-        <!-- ... contenu du menu ... -->
-    </aside>
+    <!-- Header fixe -->
+    <header class="admin-header">
+        <div class="header-logo">
+            <img src="/static/images/icones/admin.png" alt="Logo FMP Admin">
+            <h1>FMP Admin</h1>
+        </div>
+        <nav class="header-nav">
+            <a href="/admin/dashboard.html" class="nav-link">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="nav-link active">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/categories/index.html" class="nav-link">
+                <img src="/static/images/icones/categories.png" alt="Catégories">
+                <span>Catégories</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="nav-link">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/orders/index.html" class="nav-link">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="nav-link">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="/logout" class="nav-link" id="logout-link">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </header>
 
     <!-- Contenu principal -->
     <main class="admin-main">
-        <!-- En-tête -->
-        <header class="admin-header">
-            <div class="header-content">
-                <h2 id="page-title">Nouveau Produit</h2>
+        <!-- Formulaire d'édition de produit -->
+        <section class="form-container">
+            <div class="form-header">
+                <div class="header-content">
+                    <h2 class="page-title">Nouveau Produit</h2>
+                    <p class="form-description">Remplissez les informations pour créer un nouveau produit.</p>
+                </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="history.back()">
-                        Annuler
-                    </button>
-                    <button class="btn btn-primary" onclick="productEditor.saveProduct()">
-                        Enregistrer
-                    </button>
+                    <a href="/admin/pages/products/index.html" class="btn btn-secondary btn-with-icon">
+                        <span class="icon icon-back">←</span> Retour à la liste
+                    </a>
                 </div>
             </div>
-        </header>
 
-        <!-- Formulaire principal -->
-        <form id="product-form" class="form-section" onsubmit="return false;">
-            <!-- Informations de base -->
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="sku">Référence (SKU)*</label>
-                    <input
-                        type="text"
-                        id="sku"
-                        name="sku"
-                        required
-                        placeholder="Ex: HP-LAS-001"
-                    >
-                    <small class="form-hint">
-                        La référence doit être unique
-                    </small>
+            <form id="product-form" class="form-content">
+                <!-- Informations de base -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Informations de base</h3>
+                    
+                    <div class="form-grid">
+                        <!-- Nom du produit -->
+                        <div class="form-group">
+                            <label for="name" class="required">Nom du produit</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                                required
+                                placeholder="Ex: Cartouche HP 301 Noir"
+                            >
+                            <span class="helper-text">Nom complet du produit tel qu'il apparaîtra sur le site</span>
+                        </div>
+
+                        <!-- SKU (référence) -->
+                        <div class="form-group">
+                            <label for="sku" class="required">Référence (SKU)</label>
+                            <input
+                                type="text"
+                                id="sku"
+                                name="sku"
+                                class="form-control"
+                                required
+                                placeholder="Ex: HP-301-BLK"
+                            >
+                            <span class="helper-text">Référence unique du produit (générée automatiquement)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Catégorie -->
+                        <div class="form-group">
+                            <label for="category_id" class="required">Catégorie</label>
+                            <select id="category_id" name="category_id" class="form-control" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                <optgroup label="Recyclés">
+                                    <option value="1">Recyclés - Encre</option>
+                                    <option value="2">Recyclés - Toner</option>
+                                </optgroup>
+                                <optgroup label="Originaux">
+                                    <option value="3">Origines - Encre</option>
+                                    <option value="4">Origines - Toner</option>
+                                </optgroup>
+                                <optgroup label="Compatibles">
+                                    <option value="5">Compatibles - Encre</option>
+                                    <option value="6">Compatibles - Toner</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Marque -->
+                        <div class="form-group">
+                            <label for="brand_id" class="required">Marque</label>
+                            <select id="brand_id" name="brand_id" class="form-control" required>
+                                <option value="">Sélectionnez une marque</option>
+                                <option value="1">HP</option>
+                                <option value="2">Canon</option>
+                                <option value="3">Epson</option>
+                                <option value="4">Brother</option>
+                                <option value="5">Lexmark</option>
+                                <option value="6">Samsung</option>
+                                <option value="7">Kyocera</option>
+                                <option value="8">Xerox</option>
+                                <option value="9">Ricoh</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Prix -->
+                        <div class="form-group">
+                            <label for="price" class="required">Prix (€)</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                class="form-control"
+                                step="0.01"
+                                min="0"
+                                required
+                                placeholder="0.00"
+                            >
+                        </div>
+
+                        <!-- Statut -->
+                        <div class="form-group">
+                            <label>Statut</label>
+                            <div class="form-switch">
+                                <label class="switch-toggle">
+                                    <input type="checkbox" id="is_active" name="is_active" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                                <span id="status-text">Actif</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="name">Nom du produit*</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                        placeholder="Ex: Cartouche HP LaserJet Pro"
-                    >
+                <!-- Gestion de stock -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Gestion de stock</h3>
+                    
+                    <div class="form-grid">
+                        <!-- Quantité en stock -->
+                        <div class="form-group">
+                            <label for="stock_quantity" class="required">Quantité en stock</label>
+                            <input
+                                type="number"
+                                id="stock_quantity"
+                                name="stock_quantity"
+                                class="form-control"
+                                min="0"
+                                required
+                                placeholder="0"
+                            >
+                        </div>
+
+                        <!-- Niveau minimum de stock -->
+                        <div class="form-group">
+                            <label for="min_stock_level">Niveau minimum d'alerte</label>
+                            <input
+                                type="number"
+                                id="min_stock_level"
+                                name="min_stock_level"
+                                class="form-control"
+                                min="0"
+                                value="5"
+                                placeholder="5"
+                            >
+                            <span class="helper-text">Seuil d'alerte de stock bas</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="category_id">Catégorie*</label>
-                    <select id="category_id" name="category_id" required>
-                        <option value="">Sélectionner une catégorie</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="brand_id">Marque*</label>
-                    <select id="brand_id" name="brand_id" required>
-                        <option value="">Sélectionner une marque</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Prix (€)*</label>
-                    <input
-                        type="number"
-                        id="price"
-                        name="price"
-                        step="0.01"
-                        min="0"
-                        required
-                        placeholder="0.00"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="stock_quantity">Quantité en stock*</label>
-                    <input
-                        type="number"
-                        id="stock_quantity"
-                        name="stock_quantity"
-                        min="0"
-                        required
-                        placeholder="0"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="min_stock_level">Niveau minimum de stock</label>
-                    <input
-                        type="number"
-                        id="min_stock_level"
-                        name="min_stock_level"
-                        min="0"
-                        placeholder="5"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="checkbox-label">
+                <!-- Description -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Description</h3>
+                    
+                    <!-- Description courte -->
+                    <div class="form-group">
+                        <label for="short_description">Description courte</label>
                         <input
-                            type="checkbox"
-                            id="is_active"
-                            name="is_active"
-                            checked
+                            type="text"
+                            id="short_description"
+                            name="short_description"
+                            class="form-control"
+                            maxlength="255"
+                            placeholder="Brève description du produit (max 255 caractères)"
                         >
-                        Produit actif
-                    </label>
+                    </div>
+
+                    <!-- Description complète -->
+                    <div class="form-group">
+                        <label for="description">Description complète</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Description détaillée du produit"
+                        ></textarea>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Description -->
-            <div class="form-group">
-                <label for="short_description">Description courte</label>
-                <input
-                    type="text"
-                    id="short_description"
-                    name="short_description"
-                    maxlength="500"
-                    placeholder="Brève description du produit"
-                >
-                <small class="form-hint">
-                    Maximum 500 caractères
-                </small>
-            </div>
+                <!-- Spécifications -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Spécifications techniques</h3>
+                    
+                    <div id="specifications-container">
+                        <!-- Les lignes de spécifications seront ajoutées ici dynamiquement -->
+                    </div>
+                    
+                    <button type="button" id="add-specification" class="add-specification">
+                        + Ajouter une spécification
+                    </button>
+                </div>
 
-            <div class="form-group">
-                <label for="description">Description détaillée</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="6"
-                    placeholder="Description complète du produit"
-                ></textarea>
-            </div>
-        </form>
+                <!-- Images -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Images du produit</h3>
+                    
+                    <!-- Images existantes -->
+                    <div id="product-images" class="product-images">
+                        <!-- Les images existantes seront affichées ici dynamiquement -->
+                    </div>
+                    
+                    <!-- Upload de nouvelle image -->
+                    <div class="form-group">
+                        <label for="image">Ajouter une image</label>
+                        <div class="file-upload">
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/*"
+                            >
+                            <label for="image" class="file-upload-label">Sélectionner un fichier</label>
+                        </div>
+                        <span class="file-upload-info">Formats acceptés: JPG, PNG, GIF. Taille max: 2MB</span>
+                        
+                        <!-- Prévisualisation de l'image -->
+                        <div id="image-preview" class="image-preview" style="display: none;">
+                            <img id="preview-img" src="" alt="Aperçu de l'image">
+                            <button type="button" id="remove-image-btn" class="btn btn-danger">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Gestion des images -->
-        <section class="form-section">
-            <h3>Images du produit</h3>
-            
-            <!-- Zone de drop des images -->
-            <div
-                id="image-dropzone"
-                class="image-dropzone"
-                ondrop="productEditor.handleImageDrop(event)"
-                ondragover="productEditor.handleDragOver(event)"
-                ondragleave="productEditor.handleDragLeave(event)"
-            >
-                <div class="dropzone-content">
-                    <i class="icon upload-icon"></i>
-                    <p>Glissez des images ici ou</p>
-                    <input
-                        type="file"
-                        id="image-input"
-                        multiple
-                        accept="image/*"
-                        style="display: none;"
-                        onchange="productEditor.handleImageSelect(event)"
-                    >
+                <!-- Actions du formulaire -->
+                <div class="form-actions">
                     <button
                         type="button"
                         class="btn btn-secondary"
-                        onclick="document.getElementById('image-input').click()"
+                        onclick="window.location.href='/admin/pages/products/index.html'"
                     >
-                        Parcourir
+                        Annuler
+                    </button>
+                    <button
+                        type="submit"
+                        id="save-product-button"
+                        class="btn btn-primary"
+                    >
+                        Enregistrer
                     </button>
                 </div>
-            </div>
-
-            <!-- Liste des images -->
-            <div id="product-images" class="product-images">
-                <!-- Les images seront injectées ici -->
-            </div>
-        </section>
-
-        <!-- Spécifications -->
-        <section class="form-section">
-            <h3>Spécifications techniques</h3>
-            
-            <div id="specifications-list">
-                <!-- Les spécifications seront injectées ici -->
-            </div>
-
-            <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="productEditor.addSpecification()"
-            >
-                Ajouter une spécification
-            </button>
+            </form>
         </section>
     </main>
 
-    <!-- Template pour les spécifications -->
-    <template id="specification-template">
-        <div class="specification-item">
-            <div class="form-grid">
-                <div class="form-group">
-                    <input
-                        type="text"
-                        class="spec-name"
-                        placeholder="Nom de la spécification"
-                    >
-                </div>
-                <div class="form-group">
-                    <input
-                        type="text"
-                        class="spec-value"
-                        placeholder="Valeur"
-                    >
-                </div>
-                <div class="form-group">
-                    <input
-                        type="text"
-                        class="spec-unit"
-                        placeholder="Unité (optionnel)"
-                    >
-                </div>
-                <div class="form-group">
-                    <button
-                        type="button"
-                        class="btn btn-icon delete-spec"
-                        onclick="productEditor.removeSpecification(this)"
-                    >
-                        <i class="icon delete-icon"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </template>
-
     <!-- Scripts -->
-    <script type="module" src="../../static/js/product-editor.js"></script>
-</body>
+    <script type="module" src="/static/js/session.js"></script>
+    <script type="module" src="/static/js/js_admin/product_editor.js"></script>
+    <script type="module" src="/static/js/route-guard.js"></script>
 </html>

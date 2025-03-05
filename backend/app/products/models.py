@@ -1,22 +1,12 @@
 # backend/app/products/models.py
 
 from datetime import datetime
-from app import db
+from .. import db
 from slugify import slugify
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Category(db.Model):
-    """Modèle pour les catégories de produits.
-    
-    Attributs:
-        id (int): Identifiant unique
-        name (str): Nom de la catégorie
-        slug (str): Slug pour l'URL
-        description (str): Description de la catégorie
-        image_url (str): URL de l'image de la catégorie
-        parent_id (int): ID de la catégorie parente (pour sous-catégories)
-        created_at (datetime): Date de création
-        updated_at (datetime): Date de dernière modification
-    """
+    """Modèle pour les catégories de produits."""
     
     __tablename__ = 'categories'
 
@@ -53,22 +43,12 @@ class Category(db.Model):
             'description': self.description,
             'image_url': self.image_url,
             'parent_id': self.parent_id,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
 
 class Brand(db.Model):
-    """Modèle pour les marques d'imprimantes.
-    
-    Attributs:
-        id (int): Identifiant unique
-        name (str): Nom de la marque
-        slug (str): Slug pour l'URL
-        description (str): Description de la marque
-        logo_url (str): URL du logo de la marque
-        website (str): Site web officiel
-        created_at (datetime): Date de création
-    """
+    """Modèle pour les marques d'imprimantes."""
     
     __tablename__ = 'brands'
 
@@ -99,54 +79,37 @@ class Brand(db.Model):
             'description': self.description,
             'logo_url': self.logo_url,
             'website': self.website,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
 class Product(db.Model):
-    """Modèle pour les produits (cartouches d'imprimante).
-    
-    Attributs:
-        id (int): Identifiant unique
-        sku (str): Référence unique du produit
-        name (str): Nom du produit
-        slug (str): Slug pour l'URL
-        description (str): Description détaillée
-        short_description (str): Description courte
-        price (float): Prix de vente
-        stock_quantity (int): Quantité en stock
-        min_stock_level (int): Niveau minimum de stock
-        category_id (int): ID de la catégorie
-        brand_id (int): ID de la marque
-        is_active (bool): Produit actif/inactif
-        created_at (datetime): Date de création
-        updated_at (datetime): Date de dernière modification
-    """
+    """Modèle pour les produits (cartouches d'imprimante)."""
     
     __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), nullable=False)
     sku = db.Column(db.String(50), unique=True, nullable=False)
-    name = db.Column(db.String(200), nullable=False)
-    slug = db.Column(db.String(200), unique=True, nullable=False)
     description = db.Column(db.Text)
-    short_description = db.Column(db.String(500))
+    short_description = db.Column(db.String(255))
     price = db.Column(db.Float, nullable=False)
     stock_quantity = db.Column(db.Integer, default=0)
     min_stock_level = db.Column(db.Integer, default=5)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
-    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relations
-    images = db.relationship('ProductImage', backref='product', lazy=True, cascade='all, delete-orphan')
-    specifications = db.relationship('ProductSpecification', backref='product', lazy=True, cascade='all, delete-orphan')
-
-    def __init__(self, sku, name, price, category_id, brand_id, **kwargs):
-        self.sku = sku
+    images = db.relationship('ProductImage', backref='product', cascade='all, delete-orphan')
+    specifications = db.relationship('ProductSpecification', backref='product', cascade='all, delete-orphan')
+    
+    def __init__(self, name, sku, price, category_id, brand_id, **kwargs):
         self.name = name
         self.slug = slugify(name)
+        self.sku = sku
         self.price = price
         self.category_id = category_id
         self.brand_id = brand_id
@@ -162,35 +125,25 @@ class Product(db.Model):
         """Convertit le produit en dictionnaire."""
         return {
             'id': self.id,
-            'sku': self.sku,
             'name': self.name,
             'slug': self.slug,
+            'sku': self.sku,
             'description': self.description,
             'short_description': self.short_description,
             'price': self.price,
             'stock_quantity': self.stock_quantity,
             'min_stock_level': self.min_stock_level,
-            'category': self.category.to_dict(),
-            'brand': self.brand.to_dict(),
+            'category_id': self.category_id,
+            'brand_id': self.brand_id,
             'is_active': self.is_active,
             'images': [img.to_dict() for img in self.images],
             'specifications': [spec.to_dict() for spec in self.specifications],
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
 
 class ProductImage(db.Model):
-    """Modèle pour les images de produits.
-    
-    Attributs:
-        id (int): Identifiant unique
-        product_id (int): ID du produit associé
-        url (str): URL de l'image
-        alt (str): Texte alternatif
-        is_primary (bool): Image principale ou non
-        position (int): Position dans la galerie
-        created_at (datetime): Date de création
-    """
+    """Modèle pour les images de produits."""
     
     __tablename__ = 'product_images'
 
@@ -210,20 +163,11 @@ class ProductImage(db.Model):
             'alt': self.alt,
             'is_primary': self.is_primary,
             'position': self.position,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
 class ProductSpecification(db.Model):
-    """Modèle pour les spécifications techniques des produits.
-    
-    Attributs:
-        id (int): Identifiant unique
-        product_id (int): ID du produit associé
-        name (str): Nom de la spécification
-        value (str): Valeur de la spécification
-        unit (str): Unité de mesure (optionnel)
-        position (int): Position dans la liste
-    """
+    """Modèle pour les spécifications techniques des produits."""
     
     __tablename__ = 'product_specifications'
 
@@ -242,4 +186,39 @@ class ProductSpecification(db.Model):
             'value': self.value,
             'unit': self.unit,
             'position': self.position
+        }
+
+class User(db.Model):
+    """Modèle pour les utilisateurs."""
+    
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    is_verified = db.Column(db.Boolean, default=False)
+    verification_token = db.Column(db.String(120), nullable=True)
+    verification_token_expires = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def set_password(self, password):
+        """Définit le mot de passe haché de l'utilisateur."""
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Vérifie si le mot de passe fourni correspond au mot de passe haché."""
+        return check_password_hash(self.password, password)
+        
+    def to_dict(self):
+        """Convertit l'utilisateur en dictionnaire (sans le mot de passe)."""
+        return {
+            'id': self.id,
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'email': self.email,
+            'is_admin': self.is_admin,
+            'is_verified': self.is_verified,
+            'created_at': self.created_at.isoformat() if self.created_at else None
         }

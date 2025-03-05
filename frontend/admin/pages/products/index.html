@@ -1,141 +1,411 @@
-<!-- frontend/admin/pages/products/index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMP Admin - Gestion des Produits</title>
-    <link rel="stylesheet" href="../../static/css/admin.css">
-    <link rel="stylesheet" href="../../static/css/forms.css">
-    
-    <!-- Vérification des droits admin -->
+    <title>Gestion des Produits - FMP Admin</title>
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <link rel="stylesheet" href="/static/css/css_admin/products.css">
     <script type="module">
-        import { session } from '../../../static/js/session.js';
+        import { session } from '/static/js/session.js';
         
-        // Redirection si non admin
-        const userData = session.getUserData();
-        if (!userData?.is_admin) {
-            window.location.href = '/login.html';
-        }
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            console.log("Données utilisateur:", userData);
+            
+            if (!session.isAuthenticated()) {
+                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
+            if (!userData?.is_admin) {
+                window.location.href = '/pages/login.html?message=admin_required';
+                return;
+            }
+        });
     </script>
 </head>
+
 <body>
-    <!-- Menu latéral admin -->
-    <aside class="admin-sidebar">
-        <div class="admin-brand">
+    <!-- Header fixe -->
+    <header class="admin-header">
+        <div class="header-logo">
+            <img src="/static/images/icones/admin.png" alt="Logo FMP Admin">
             <h1>FMP Admin</h1>
         </div>
-        <nav class="admin-nav">
-            <ul>
-                <li>
-                    <a href="../dashboard.html">
-                        <i class="icon dashboard-icon"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="./index.html" class="active">
-                        <i class="icon products-icon"></i>
-                        Produits
-                    </a>
-                </li>
-                <li>
-                    <a href="../categories/index.html">
-                        <i class="icon categories-icon"></i>
-                        Catégories
-                    </a>
-                </li>
-                <li>
-                    <a href="../brands/index.html">
-                        <i class="icon brands-icon"></i>
-                        Marques
-                    </a>
-                </li>
-                <li>
-                    <a href="../orders/index.html">
-                        <i class="icon orders-icon"></i>
-                        Commandes
-                    </a>
-                </li>
-                <li>
-                    <a href="../users/index.html">
-                        <i class="icon users-icon"></i>
-                        Utilisateurs
-                    </a>
-                </li>
-            </ul>
+        <nav class="header-nav">
+            <a href="/admin/dashboard.html" class="nav-link">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="nav-link active">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/categories/index.html" class="nav-link">
+                <img src="/static/images/icones/categories.png" alt="Catégories">
+                <span>Catégories</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="nav-link">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/orders/index.html" class="nav-link">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="nav-link">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="/logout" class="nav-link" id="logout-link">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
         </nav>
-    </aside>
+    </header>
 
     <!-- Contenu principal -->
     <main class="admin-main">
-        <!-- En-tête -->
-        <header class="admin-header">
-            <div class="header-content">
+        <!-- En-tête de la page -->
+        <section class="page-header">
+            <div class="page-header-content">
                 <h2>Gestion des Produits</h2>
-                <a href="./create.html" class="btn btn-primary">
-                    Nouveau Produit
+                <p class="page-description">Consultez, ajoutez, modifiez ou supprimez les produits de votre boutique.</p>
+            </div>
+            <div class="page-actions">
+                <a href="/admin/pages/products/edit.html" class="btn btn-primary">
+                    <span class="icon-plus">+</span> Ajouter un produit
                 </a>
-            </div>
-        </header>
-
-        <!-- Filtres et recherche -->
-        <section class="filters-section">
-            <div class="search-box">
-                <input
-                    type="text"
-                    id="search-input"
-                    placeholder="Rechercher un produit..."
-                >
-            </div>
-            
-            <div class="filters">
-                <select id="category-filter">
-                    <option value="">Toutes les catégories</option>
-                </select>
-                
-                <select id="brand-filter">
-                    <option value="">Toutes les marques</option>
-                </select>
-                
-                <select id="stock-filter">
-                    <option value="">Tous les stocks</option>
-                    <option value="in_stock">En stock</option>
-                    <option value="low_stock">Stock bas</option>
-                    <option value="out_of_stock">Rupture de stock</option>
-                </select>
             </div>
         </section>
 
-        <!-- Liste des produits -->
-        <section class="products-list">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>SKU</th>
-                        <th>Nom</th>
-                        <th>Catégorie</th>
-                        <th>Marque</th>
-                        <th>Prix</th>
-                        <th>Stock</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="products-table-body">
-                    <!-- Les produits seront injectés ici -->
-                </tbody>
-            </table>
+        <!-- Filtres et recherche -->
+        <section class="filters-section">
+            <form id="filters-form" class="filters-form">
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <input type="text" id="search-input" class="filter-input" placeholder="Rechercher un produit...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="category-filter" class="filter-select">
+                            <option value="">Toutes les catégories</option>
+                            <optgroup label="Recyclés">
+                                <option value="recycled-ink">Recyclés - Encre</option>
+                                <option value="recycled-toner">Recyclés - Toner</option>
+                            </optgroup>
+                            <optgroup label="Originaux">
+                                <option value="original-ink">Origines - Encre</option>
+                                <option value="original-toner">Origines - Toner</option>
+                            </optgroup>
+                            <optgroup label="Compatibles">
+                                <option value="compatible-ink">Compatibles - Encre</option>
+                                <option value="compatible-toner">Compatibles - Toner</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="brand-filter" class="filter-select">
+                            <option value="">Toutes les marques</option>
+                            <option value="hp">HP</option>
+                            <option value="canon">Canon</option>
+                            <option value="epson">Epson</option>
+                            <option value="brother">Brother</option>
+                            <option value="lexmark">Lexmark</option>
+                            <option value="samsung">Samsung</option>
+                            <option value="kyocera">Kyocera</option>
+                            <option value="xerox">Xerox</option>
+                            <option value="ricoh">Ricoh</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="stock-filter" class="filter-select">
+                            <option value="">Tous les stocks</option>
+                            <option value="in-stock">En stock</option>
+                            <option value="low-stock">Stock faible</option>
+                            <option value="out-of-stock">Rupture de stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <div class="price-range-filter">
+                            <input type="number" id="min-price" class="filter-input small" placeholder="Prix min" min="0" step="0.01">
+                            <span class="price-range-separator">à</span>
+                            <input type="number" id="max-price" class="filter-input small" placeholder="Prix max" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="status-filter">
+                            <label class="filter-checkbox">
+                                <input type="checkbox" id="active-only">
+                                Produits actifs uniquement
+                            </label>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">Filtrer</button>
+                        <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tableau de résultats -->
+        <section class="results-section">
+            <div class="results-header">
+                <div class="results-count">
+                    <span id="results-count">48</span> produits trouvés
+                </div>
+                <div class="results-actions">
+                    <select id="sort-select" class="filter-select">
+                        <option value="name-asc">Nom (A-Z)</option>
+                        <option value="name-desc">Nom (Z-A)</option>
+                        <option value="price-asc">Prix (croissant)</option>
+                        <option value="price-desc">Prix (décroissant)</option>
+                        <option value="stock-asc">Stock (croissant)</option>
+                        <option value="stock-desc">Stock (décroissant)</option>
+                        <option value="date-desc">Date d'ajout (récent)</option>
+                        <option value="date-asc">Date d'ajout (ancien)</option>
+                    </select>
+                    <select id="per-page-select" class="filter-select small">
+                        <option value="10">10 par page</option>
+                        <option value="25" selected>25 par page</option>
+                        <option value="50">50 par page</option>
+                        <option value="100">100 par page</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tableau des produits -->
+            <div class="table-responsive">
+                <table class="admin-table products-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-column">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="select-all">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th class="image-column">Image</th>
+                            <th class="name-column">Produit</th>
+                            <th>SKU</th>
+                            <th>Catégorie</th>
+                            <th>Marque</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Statut</th>
+                            <th class="actions-column">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Exemple de ligne de produit -->
+                        <tr>
+                            <td>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" class="product-checkbox" value="1">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="image-cell">
+                                <div class="product-thumbnail">
+                                    <img src="/static/images/products/hp-305xl-black.jpg" alt="Cartouche HP 305XL Noir">
+                                </div>
+                            </td>
+                            <td class="name-cell">
+                                <div class="product-name">Cartouche HP 305XL Noir</div>
+                            </td>
+                            <td>HP305XL-BK</td>
+                            <td>Originaux - Encre</td>
+                            <td>HP</td>
+                            <td>19,95 €</td>
+                            <td class="stock-cell">
+                                <span class="stock-badge in-stock">12</span>
+                            </td>
+                            <td>
+                                <span class="status-badge active">Actif</span>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="actions-dropdown">
+                                    <button class="btn-actions">Actions</button>
+                                    <div class="dropdown-content">
+                                        <a href="/admin/pages/products/edit.html?id=1" class="dropdown-item">
+                                            <span class="icon-edit"></span> Modifier
+                                        </a>
+                                        <a href="#" class="dropdown-item duplicate-product" data-id="1">
+                                            <span class="icon-duplicate"></span> Dupliquer
+                                        </a>
+                                        <a href="#" class="dropdown-item delete-product" data-id="1">
+                                            <span class="icon-delete"></span> Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Autre exemple de ligne de produit -->
+                        <tr>
+                            <td>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" class="product-checkbox" value="2">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="image-cell">
+                                <div class="product-thumbnail">
+                                    <img src="/static/images/products/canon-pg545xl.jpg" alt="Cartouche Canon PG-545XL">
+                                </div>
+                            </td>
+                            <td class="name-cell">
+                                <div class="product-name">Cartouche Canon PG-545XL Noir</div>
+                            </td>
+                            <td>CAN-PG545XL</td>
+                            <td>Originaux - Encre</td>
+                            <td>Canon</td>
+                            <td>17,95 €</td>
+                            <td class="stock-cell">
+                                <span class="stock-badge low-stock">3</span>
+                            </td>
+                            <td>
+                                <span class="status-badge active">Actif</span>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="actions-dropdown">
+                                    <button class="btn-actions">Actions</button>
+                                    <div class="dropdown-content">
+                                        <a href="/admin/pages/products/edit.html?id=2" class="dropdown-item">
+                                            <span class="icon-edit"></span> Modifier
+                                        </a>
+                                        <a href="#" class="dropdown-item duplicate-product" data-id="2">
+                                            <span class="icon-duplicate"></span> Dupliquer
+                                        </a>
+                                        <a href="#" class="dropdown-item delete-product" data-id="2">
+                                            <span class="icon-delete"></span> Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Autre exemple avec stock épuisé -->
+                        <tr>
+                            <td>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" class="product-checkbox" value="3">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td class="image-cell">
+                                <div class="product-thumbnail">
+                                    <img src="/static/images/products/hp-305-color.jpg" alt="Cartouche HP 305 Couleur">
+                                </div>
+                            </td>
+                            <td class="name-cell">
+                                <div class="product-name">Cartouche HP 305 Couleur</div>
+                            </td>
+                            <td>HP305-COL</td>
+                            <td>Originaux - Encre</td>
+                            <td>HP</td>
+                            <td>16,95 €</td>
+                            <td class="stock-cell">
+                                <span class="stock-badge out-of-stock">0</span>
+                            </td>
+                            <td>
+                                <span class="status-badge inactive">Inactif</span>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="actions-dropdown">
+                                    <button class="btn-actions">Actions</button>
+                                    <div class="dropdown-content">
+                                        <a href="/admin/pages/products/edit.html?id=3" class="dropdown-item">
+                                            <span class="icon-edit"></span> Modifier
+                                        </a>
+                                        <a href="#" class="dropdown-item duplicate-product" data-id="3">
+                                            <span class="icon-duplicate"></span> Dupliquer
+                                        </a>
+                                        <a href="#" class="dropdown-item delete-product" data-id="3">
+                                            <span class="icon-delete"></span> Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Actions groupées -->
+            <div class="bulk-actions">
+                <div class="bulk-selection">
+                    <span id="selected-count">0</span> produits sélectionnés
+                </div>
+                <div class="bulk-actions-buttons">
+                    <select id="bulk-action-select" class="filter-select">
+                        <option value="">Action groupée</option>
+                        <option value="activate">Activer</option>
+                        <option value="deactivate">Désactiver</option>
+                        <option value="delete">Supprimer</option>
+                    </select>
+                    <button id="apply-bulk-action" class="btn btn-primary" disabled>Appliquer</button>
+                </div>
+            </div>
 
             <!-- Pagination -->
-            <div class="pagination" id="pagination">
-                <!-- La pagination sera injectée ici -->
+            <div class="pagination">
+                <button class="btn-pagination" disabled>
+                    <span class="icon-chevron-left"></span>
+                </button>
+                <button class="btn-pagination active">1</button>
+                <button class="btn-pagination">2</button>
+                <button class="btn-pagination">3</button>
+                <button class="btn-pagination">4</button>
+                <button class="btn-pagination">5</button>
+                <span class="pagination-ellipsis">...</span>
+                <button class="btn-pagination">10</button>
+                <button class="btn-pagination">
+                    <span class="icon-chevron-right"></span>
+                </button>
             </div>
         </section>
     </main>
 
+    <!-- Modal de confirmation de suppression -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la suppression</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-delete" class="btn btn-secondary">Annuler</button>
+                <button id="confirm-delete" class="btn btn-danger">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation d'action groupée -->
+    <div id="bulk-action-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer l'action groupée</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="bulk-action-message">Êtes-vous sûr de vouloir effectuer cette action sur les produits sélectionnés ?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-bulk-action" class="btn btn-secondary">Annuler</button>
+                <button id="confirm-bulk-action" class="btn btn-primary">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script type="module" src="../../static/js/products.js"></script>
+    <script type="module" src="/static/js/js_admin/products.js"></script>
+    <script type="module" src="/static/js/route-guard.js"></script>
 </body>
 </html>

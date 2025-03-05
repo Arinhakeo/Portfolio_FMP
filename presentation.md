@@ -168,7 +168,14 @@ gantt
     Launch         :2025-01-12, 1w
 ```
 
-### Contact Information
-- **Name:** Arinhasvath KEOPHIPHATH
-- **Project:** ForMyPrinter (FMP)
-- **Role:** Full-Stack Developer & Project Manager
+# Créer un environnement virtuel
+python -m venv venv
+
+# Activer l'environnement
+# Sur Windows :
+venv\Scripts\activate
+# Sur Linux/Mac :
+source venv/bin/activate
+
+# Installer les dépendances
+pip install -r backend/requirements.txt

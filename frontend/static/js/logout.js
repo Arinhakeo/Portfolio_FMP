@@ -1,6 +1,9 @@
 // Dans un fichier logout.js pour la déconnexion
-function logout() {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('user_info');
-    window.location.href = '/login';
+import session from './session.js';
+
+async function logout() {
+    await session.handleLogout(); // Gère proprement la déconnexion via SessionManager
+    window.location.href = '/index.html';
 }
+
+logout();

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMP Admin - Tableau de bord</title>
+    <link rel="stylesheet" href="/static/css/css_admin/admin.css">
+    <script type="module">
+        import { session } from '/static/js/session.js';
+        
+        // Vérification au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérification du statut admin
+            const userData = session.getUserData();
+            console.log("Données utilisateur:", userData);
+            
+            if (!session.isAuthenticated()) {
+                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
+            if (!userData?.is_admin) {
+                window.location.href = '/pages/login.html?message=admin_required';
+                return;
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header fixe -->
+    <header class="admin-header">
+        <div class="header-logo">
+            <img src="/static/images/icones/admin.png" alt="Logo FMP Admin">
+            <h1>FMP Admin</h1>
+        </div>
+        <nav class="header-nav">
+            <a href="/admin/dashboard.html" class="nav-link active">
+                <img src="/static/images/icones/laptop.png" alt="Dashboard">
+                <span>Tableau de bord</span>
+            </a>
+            <a href="/admin/pages/products/index.html" class="nav-link">
+                <img src="/static/images/icones/products.png" alt="Produits">
+                <span>Produits</span>
+            </a>
+            <a href="/admin/pages/categories/index.html" class="nav-link">
+                <img src="/static/images/icones/categories.png" alt="Catégories">
+                <span>Catégories</span>
+            </a>
+            <a href="/admin/pages/brands/index.html" class="nav-link">
+                <img src="/static/images/icones/brands.png" alt="Marques">
+                <span>Marques</span>
+            </a>
+            <a href="/admin/pages/orders/index.html" class="nav-link">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="nav-link">
+                <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                <span>Utilisateurs</span>
+            </a>
+            <a href="/frontend/pages/Logout.html" class="nav-link" id="logout-link">
+                <img src="/static/images/icones/logout.png" alt="Déconnexion">
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+        <!-- En-tête de la page -->
+        <section class="welcome-panel">
+            <div class="welcome-content">
+                <h2>Bienvenue sur le tableau de bord</h2>
+                <p class="subtitle">Gérez votre boutique, surveillez les ventes et suivez les activités depuis cette interface.</p>
+            </div>
+            <div class="date-panel">
+                <div class="current-date" id="current-date">
+                    <!-- Date affichée par JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Vue d'ensemble des statistiques -->
+        <section class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                </div>
+                <div class="stat-content">
+                    <h3>Commandes</h3>
+                    <div class="stat-value" id="orders-count">0</div>
+                    <div class="stat-label">aujourd'hui</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="/static/images/icones/Euro-256.png" alt="Ventes">
+                </div>
+                <div class="stat-content">
+                    <h3>Ventes</h3>
+                    <div class="stat-value" id="sales-amount">0,00 €</div>
+                    <div class="stat-label">aujourd'hui</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="/static/images/icones/products.png" alt="Produits">
+                </div>
+                <div class="stat-content">
+                    <h3>Produits</h3>
+                    <div class="stat-value" id="products-count">0</div>
+                    <div class="stat-label">en stock</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="/static/images/icones/user3.png" alt="Utilisateurs">
+                </div>
+                <div class="stat-content">
+                    <h3>Utilisateurs</h3>
+                    <div class="stat-value" id="users-count">0</div>
+                    <div class="stat-label">inscrits</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Graphiques et tables -->
+        <div class="dashboard-grid">
+            <!-- Graphique de ventes -->
+            <section class="dashboard-panel sales-chart-panel">
+                <h2 class="panel-title">Ventes des 7 derniers jours</h2>
+                <div class="chart-container" id="sales-chart">
+                    <!-- Le graphique sera généré par JavaScript -->
+                    <div class="chart-placeholder">Chargement du graphique...</div>
+                </div>
+            </section>
+
+            <!-- Dernières commandes -->
+            <section class="dashboard-panel recent-orders-panel">
+                <h2 class="panel-title">Dernières commandes</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Client</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-orders">
+                            <!-- Les commandes seront générées par JavaScript -->
+                            <tr class="placeholder-row">
+                                <td colspan="5" class="center">Chargement des commandes...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <a href="/admin/pages/orders/index.html" class="btn-link">Voir toutes les commandes</a>
+                </div>
+            </section>
+
+            <!-- Produits à faible stock -->
+            <section class="dashboard-panel low-stock-panel">
+                <h2 class="panel-title">Produits à faible stock</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="low-stock-products">
+                            <!-- Les produits seront générés par JavaScript -->
+                            <tr class="placeholder-row">
+                                <td colspan="3" class="center">Chargement des produits...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <a href="/admin/pages/products/index.html" class="btn-link">Gérer les produits</a>
+                </div>
+            </section>
+
+            <!-- Dernières activités -->
+            <section class="dashboard-panel activities-panel">
+                <h2 class="panel-title">Dernières activités</h2>
+                <ul class="activity-list" id="recent-activities">
+                    <!-- Les activités seront générées par JavaScript -->
+                    <li class="activity-item placeholder">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">Chargement des activités...</div>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="/static/js/js_admin/dashboard.js"></script>
+    <script type="module" src="/static/js/route-guard.js"></script>
+</body>
+</html>

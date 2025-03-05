@@ -89,7 +89,7 @@ class CategoriesManager {
             
             // Sous-catégories
             if (category.children.length > 0) {
-                item.querySelector('.subcategories').innerHTML = 
+                item.querySelector('.subcategories').innerHTML =
                     this.buildCategoryHTML(category.children, level + 1);
             }
             

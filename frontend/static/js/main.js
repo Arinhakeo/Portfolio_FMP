@@ -1,224 +1,126 @@
-// frontend/static/js/main.js
+// ============================================================================
+//                         GESTIONNAIRE PRINCIPAL
+// ============================================================================
+
+/**
+ * @fileoverview Gestionnaire principal de l'application
+ * @requires SessionManager from './session.js'
+ * @requires Notifications from './notifications.js'
+ */
 
 import { session } from './session.js';
 import { notifications } from './notifications.js';
 
-// Configuration de l'API
-const API_BASE_URL = 'http://localhost:5000/api';
+// ============================================================================
+//                         CONFIGURATION
+// ============================================================================
 
-/**
- * Gestionnaire principal du site
- * Gère la navigation, le panier, l'interface utilisateur et les interactions
- */
+const APP_CONFIG = {
+    API_BASE_URL: 'http://localhost:5000/api',
+    ROUTES: {
+        HOME: '/',
+        LOGIN: '/login',
+        REGISTER: '/register',
+        PROFILE: '/profile',
+        CART: '/cart'
+    },
+    SELECTORS: {
+        AUTH_CONTAINER: '#auth-container',
+        USER_NAV: '#user-nav',
+        CART_COUNT: '#cart-count',
+        CART_TOTAL: '#cart-total',
+        SEARCH_FORM: '.search-bar form',
+        CATEGORY_MENU: '#category-menu',
+        FEATURED_CATEGORIES: '#featured-categories'
+    }
+};
+
+// ============================================================================
+//                         CLASSE PRINCIPALE
+// ============================================================================
+
 class MainManager {
+    /**
+     * @constructor
+     */
     constructor() {
         // Initialisation des propriétés
         this.cartItems = [];
+        this.categories = [];
         this.currentPage = null;
+
+        // Configuration des écouteurs globaux
+        this.setupGlobalListeners();
+        
+        // Initialisation
         this.initialize();
+        console.log('MainManager initialisé');
     }
 
     /**
-     * Initialisation des fonctionnalités communes
+     * Configure les écouteurs globaux
+     * @private
      */
-    async initialize() {
-        // Chargement initial des données
-        this.loadCart();
-        this.setupRouting();
+    setupGlobalListeners() {
+            // Écouteurs d'authentification avec plus de détails dans les logs
+    window.addEventListener('auth:login', (e) => {
+        console.log('Événement auth:login reçu avec données:', e.detail);
         this.updateUserInterface();
-        this.setupEventListeners();
-        await this.loadCategories();
-    }
+    });
+    
+    window.addEventListener('auth:logout', () => {
+        console.log('Événement auth:logout reçu');
+        this.updateUserInterface();
+    });
 
-    /**
-     * Configuration du système de routage
-     */
-    setupRouting() {
-        // Définition des routes
-        this.routes = {
-            '/': 'index.html',
-            '/login': 'pages/login.html',
-            '/register': 'pages/register.html',
-            '/profile': 'pages/profile.html',
-            '/cart': 'pages/cart.html',
-            '/products': 'pages/products.html'
-        };
-
-        // Écouteur pour la navigation
-        window.addEventListener('popstate', (event) => {
-            event.preventDefault();
+        // Écouteur de navigation
+        window.addEventListener('popstate', (e) => {
+            e.preventDefault();
             this.handleRoute(window.location.pathname);
         });
     }
 
     /**
-     * Gère le changement de route
-     * @param {string} path - Chemin de la route
+     * Initialise l'application
+     * @private
      */
-    async handleRoute(path) {
-        const route = this.routes[path];
-        if (route) {
-            try {
-                await this.loadPage(route);
-                history.pushState(null, '', path);
-                this.initializePageContent(path);
-            } catch (error) {
-                console.error('Erreur de routage:', error);
-                notifications.create({
-                    type: 'error',
-                    message: 'Erreur lors du chargement de la page'
-                });
-            }
-        }
-    }
-
-    /**
-     * Charge une page dans le conteneur principal
-     * @param {string} pagePath - Chemin du fichier de la page
-     */
-    async loadPage(pagePath) {
+    async initialize() {
         try {
-            const response = await fetch(pagePath);
-            if (!response.ok) throw new Error('Page non trouvée');
+            // Vérification immédiate de l'authentification au démarrage
+            this.updateUserInterface();
             
-            const content = await response.text();
-            const contentContainer = document.getElementById('content');
-            if (contentContainer) {
-                contentContainer.innerHTML = content;
-            }
+            await Promise.all([
+                this.loadCart(),
+                this.loadCategories()
+            ]);
+
+            this.setupEventListeners();
+            
+            console.log('Application initialisée avec succès');
         } catch (error) {
-            console.error('Erreur chargement page:', error);
-            throw error;
+            console.error('Erreur initialisation:', error);
         }
     }
 
     /**
-     * Initialise le contenu spécifique à chaque page
-     * @param {string} path - Chemin de la page actuelle
-     */
-    initializePageContent(path) {
-        switch (path) {
-            case '/':
-                this.initializeHome();
-                break;
-            case '/products':
-                this.initializeProducts();
-                break;
-            case '/cart':
-                this.initializeCart();
-                break;
-            // Autres cas spécifiques...
-        }
-    }
-
-    /**
-     * Gestion du panier
-     */
-    loadCart() {
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
-            try {
-                this.cartItems = JSON.parse(savedCart);
-                this.updateCartCount();
-            } catch (error) {
-                console.error('Erreur chargement panier:', error);
-                this.cartItems = [];
-            }
-        }
-    }
-
-    /**
-     * Met à jour l'affichage du nombre d'articles dans le panier
-     */
-    updateCartCount() {
-        const count = this.cartItems.reduce((total, item) => total + item.quantity, 0);
-        const total = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        const cartCount = document.getElementById('cart-count');
-        const cartTotal = document.getElementById('cart-total');
-        
-        if (cartCount) cartCount.textContent = count;
-        if (cartTotal) cartTotal.textContent = `${total.toFixed(2)} €`;
-    }
-
-    /**
-     * Mise à jour de l'interface utilisateur
-     */
-    updateUserInterface() {
-        const isLoggedIn = session.isAuthenticated();
-        const userData = session.getUserData();
-
-        // Mise à jour des éléments de navigation
-        this.updateNavigationElements(isLoggedIn);
-
-        // Création du menu utilisateur si connecté
-        if (isLoggedIn && userData) {
-            this.createUserMenu(userData);
-        }
-    }
-
-    /**
-     * Met à jour les éléments de navigation
-     * @param {boolean} isLoggedIn - État de connexion
-     */
-    updateNavigationElements(isLoggedIn) {
-        const elements = {
-            'login-link': !isLoggedIn,
-            'register-link': !isLoggedIn,
-            'user-menu': isLoggedIn,
-            'cart-icon': true
-        };
-
-        Object.entries(elements).forEach(([id, show]) => {
-            const element = document.getElementById(id);
-            if (element) element.style.display = show ? 'block' : 'none';
-        });
-    }
-
-    /**
-     * Crée le menu utilisateur
-     * @param {Object} userData - Données de l'utilisateur
-     */
-    createUserMenu(userData) {
-        const userNav = document.querySelector('.user-nav');
-        if (userNav) {
-            userNav.innerHTML = `
-                <div class="user-menu">
-                    <button class="user-menu-btn">
-                        <i class="icon user-icon"></i>
-                        ${userData.firstname}
-                    </button>
-                    <div class="user-menu-dropdown">
-                        <a href="/profile" data-path="/profile">Mon Profil</a>
-                        <a href="/orders" data-path="/orders">Mes Commandes</a>
-                        <a href="/addresses" data-path="/addresses">Mes Adresses</a>
-                        <button class="logout-btn">Déconnexion</button>
-                    </div>
-                </div>
-            `;
-
-            // Gestionnaire de déconnexion
-            userNav.querySelector('.logout-btn').addEventListener('click', () => this.handleLogout());
-        }
-    }
-
-    /**
-     * Charge les catégories pour le menu
+     * Charge les catégories depuis l'API
+     * @private
      */
     async loadCategories() {
         try {
-            const response = await fetch(`${API_BASE_URL}/products/categories`);
-            if (!response.ok) throw new Error('Erreur chargement catégories');
-
-            const categories = await response.json();
-            const menu = document.getElementById('category-menu');
+            const response = await fetch(`${APP_CONFIG.API_BASE_URL}/products/categories`);
+            if (!response.ok) {
+                throw new Error('Échec du chargement des catégories');
+            }
+            this.categories = await response.json();
+            console.log('Catégories chargées:', this.categories);
             
-            if (menu) {
-                menu.innerHTML = categories.map(category => `
+            // Afficher les catégories
+            const categoryMenu = document.querySelector(APP_CONFIG.SELECTORS.CATEGORY_MENU);
+            if (categoryMenu && this.categories.length) {
+                categoryMenu.innerHTML = this.categories.map(category => `
                     <li>
-                        <a href="/products?category=${category.slug}" 
-                           data-path="/products"
-                           data-category="${category.slug}">
+                        <a href="/products?category=${category.slug}" data-category="${category.id}">
                             ${category.name}
                         </a>
                     </li>
@@ -226,51 +128,162 @@ class MainManager {
             }
         } catch (error) {
             console.error('Erreur chargement catégories:', error);
-            notifications.create({
-                type: 'error',
-                message: 'Impossible de charger les catégories'
-            });
+            this.categories = [];
+        }
+    }
+
+    // ============================================================================
+    //                         INTERFACE UTILISATEUR
+    // ============================================================================
+
+    /**
+     * Met à jour l'interface utilisateur
+     * @private
+     */
+    updateUserInterface() {
+        try {
+            const isLoggedIn = session.isAuthenticated();
+            const userData = session.getUserData();
+            
+            // Éléments d'authentification
+            const authContainer = document.getElementById('auth-container');
+            const userNav = document.getElementById('user-nav');
+            
+            console.log('Mise à jour interface :', isLoggedIn, userData);
+            
+            if (isLoggedIn && userData) {
+                // Utilisateur connecté
+                if (authContainer) authContainer.style.display = 'none';
+                if (userNav) {
+                    userNav.style.display = 'flex';
+                    // Mettre à jour le nom d'utilisateur s'il y a un élément pour ça
+                    const usernameElement = userNav.querySelector('.username');
+                    if (usernameElement) {
+                        usernameElement.textContent = userData.firstname;
+                    }
+                }
+            } else {
+                // Utilisateur non connecté
+                if (authContainer) authContainer.style.display = 'flex';
+                if (userNav) userNav.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Erreur mise à jour interface:', error);
         }
     }
 
     /**
-     * Configuration des écouteurs d'événements
+     * Génère le HTML pour un utilisateur connecté
+     * @param {Object} userData - Données utilisateur
+     * @returns {string} HTML
+     * @private
+     */
+    getAuthenticatedUserHTML(userData) {
+        return `
+            <div class="user-menu">
+                <a href="/profile" class="profile-link">
+                    <i class="icon user-icon"></i>
+                    <span>Mon compte (${userData.firstname})</span>
+                </a>
+                <div class="user-dropdown">
+                    <a href="/profile">Mon Profil</a>
+                    <a href="/orders">Mes Commandes</a>
+                    <button class="logout-btn" onclick="mainManager.handleLogout()">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Génère le HTML pour un utilisateur non connecté
+     * @returns {string} HTML
+     * @private
+     */
+    getAnonymousUserHTML() {
+        return `
+            <a href="/login" id="login-link">
+                <i class="icon user-icon"></i>
+                <span>Connexion</span>
+            </a>
+            <a href="/register" id="register-link">
+                <span>Inscription</span>
+            </a>
+        `;
+    }
+
+    // ============================================================================
+    //                         GESTION DU PANIER
+    // ============================================================================
+
+    /**
+     * Charge le panier depuis le stockage local
+     * @private
+     */
+    loadCart() {
+        try {
+            const savedCart = localStorage.getItem('cart');
+            this.cartItems = savedCart ? JSON.parse(savedCart) : [];
+            this.updateCartCount();
+        } catch (error) {
+            console.error('Erreur chargement panier:', error);
+            this.cartItems = [];
+        }
+    }
+
+    /**
+     * Met à jour l'affichage du panier
+     * @private
+     */
+    updateCartCount() {
+        try {
+            const count = this.cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
+            const total = this.cartItems.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+            
+            const cartCount = document.querySelector(APP_CONFIG.SELECTORS.CART_COUNT);
+            const cartTotal = document.querySelector(APP_CONFIG.SELECTORS.CART_TOTAL);
+            
+            if (cartCount) cartCount.textContent = count;
+            if (cartTotal) cartTotal.textContent = `${total.toFixed(2)} €`;
+        } catch (error) {
+            console.error('Erreur mise à jour panier:', error);
+        }
+    }
+
+    // ============================================================================
+    //                         ÉVÉNEMENTS ET FORMULAIRES
+    // ============================================================================
+
+    /**
+     * Configure les écouteurs d'événements
+     * @private
      */
     setupEventListeners() {
-        // Navigation
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('a[data-path]')) {
-                e.preventDefault();
-                const path = e.target.getAttribute('data-path');
-                this.handleRoute(path);
-            }
-        });
-
-        // Recherche
-        this.setupSearchForm();
+        // Bouton de déconnexion
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => this.handleLogout());
+        }
         
-        // Newsletter
+        this.setupSearchForm();
         this.setupNewsletterForm();
     }
 
     /**
-     * Configuration du formulaire de recherche
+     * Configure le formulaire de recherche
+     * @private
      */
     setupSearchForm() {
-        const searchForm = document.querySelector('.search-bar form');
+        const searchForm = document.querySelector(APP_CONFIG.SELECTORS.SEARCH_FORM);
         if (searchForm) {
-            searchForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const query = document.getElementById('search-input').value.trim();
-                if (query) {
-                    this.handleRoute(`/products?search=${encodeURIComponent(query)}`);
-                }
-            });
+            searchForm.addEventListener('submit', this.handleSearch.bind(this));
         }
     }
 
     /**
-     * Configuration du formulaire de newsletter
+     * Configure le formulaire de newsletter
+     * @private
      */
     setupNewsletterForm() {
         const newsletterForm = document.getElementById('newsletter-form');
@@ -280,8 +293,22 @@ class MainManager {
     }
 
     /**
-     * Gestion de l'inscription à la newsletter
-     * @param {Event} e - Événement de soumission du formulaire
+     * Gère la recherche
+     * @param {Event} e - Événement submit
+     * @private
+     */
+    handleSearch(e) {
+        e.preventDefault();
+        const query = e.target.querySelector('input').value.trim();
+        if (query) {
+            window.location.href = `/products?search=${encodeURIComponent(query)}`;
+        }
+    }
+
+    /**
+     * Gère l'inscription à la newsletter
+     * @param {Event} e - Événement submit
+     * @private
      */
     async handleNewsletterSignup(e) {
         e.preventDefault();
@@ -289,16 +316,7 @@ class MainManager {
         const email = e.target.querySelector('input[type="email"]').value;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/newsletter/subscribe`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
-
-            if (!response.ok) throw new Error('Erreur inscription newsletter');
-
+            // Simuler une souscription réussie (à remplacer par un appel API)
             notifications.create({
                 type: 'success',
                 title: 'Merci !',
@@ -307,6 +325,7 @@ class MainManager {
 
             e.target.reset();
         } catch (error) {
+            console.error('Erreur newsletter:', error);
             notifications.create({
                 type: 'error',
                 title: 'Erreur',
@@ -316,28 +335,49 @@ class MainManager {
     }
 
     /**
-     * Gestion de la déconnexion
+     * Gère les changements de route
+     * @param {string} path - Chemin demandé
+     * @private
+     */
+    handleRoute(path) {
+        console.log('Navigation vers:', path);
+        // Logique de routage si nécessaire
+    }
+
+    // ============================================================================
+    //                         DÉCONNEXION
+    // ============================================================================
+
+    /**
+     * Gère la déconnexion
+     * @public
      */
     async handleLogout() {
         try {
+            // Appel de la déconnexion via le SessionManager
             await session.handleLogout();
+    
+            // Mise à jour de l'interface utilisateur
             this.updateUserInterface();
-            this.handleRoute('/');
+    
+            // Redirection vers la page d'accueil
+            window.location.href = '/';
+    
+            // Notification de succès
             notifications.create({
                 type: 'success',
                 message: 'Vous êtes déconnecté'
             });
         } catch (error) {
-            console.error('Erreur lors de la déconnexion:', error);
-            notifications.create({
-                type: 'error',
-                message: 'Erreur lors de la déconnexion'
-            });
+            console.error('Erreur déconnexion:', error);
         }
     }
 }
 
-// Initialisation et export
+// ============================================================================
+//                         INITIALISATION
+// ============================================================================
+
 const mainManager = new MainManager();
 window.mainManager = mainManager;
 

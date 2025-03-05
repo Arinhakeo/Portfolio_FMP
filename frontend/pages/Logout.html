@@ -9,15 +9,10 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/logout.css">
 
-    <script type="module">
-        import { session } from '../static/js/session.js';
-        
-        // Déconnexion immédiate
-        session.handleLogout();
-    </script>
 </head>
 <body>
     <div class="auth-container">
+        <a href="/frontend/index.html" class="exit-link">
         <div class="auth-box logout-box">
             <div class="logout-animation">
                 <!-- Animation de déconnexion -->
@@ -27,7 +22,9 @@
             </div>
             <h2>Déconnexion en cours...</h2>
             <p>Vous allez être redirigé vers la page d'accueil.</p>
+        </a>
         </div>
     </div>
+    <script src="/static/js/logout.js"></script>
 </body>
 </html>

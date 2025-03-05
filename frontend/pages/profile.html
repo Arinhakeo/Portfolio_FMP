@@ -1,172 +1,128 @@
-<!-- frontend/pages/profile.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FMP - Mon Profil</title>
-    <!-- Import des styles -->
     <link rel="stylesheet" href="../static/css/main.css">
     <link rel="stylesheet" href="../static/css/profile.css">
-
 </head>
 <body>
-    <!-- En-tête avec navigation -->
+    <!-- En-tête -->
     <header class="main-header">
-        <nav class="main-nav">
-            <div class="logo">
-                <a href="/">FMP</a>
+        <div class="top-bar">
+            <div class="container">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="/">
+                        <img src="/static/images/banners/logo_FMP.jpg" alt="FMP Logo">
+                    </a>
+                </div>
+                <!-- Titre "Mon Profil" -->
+                <div class="title-profil">
+                    <h1>Mon Profil</h1>
+                </div>
+                <!-- Panier -->
+                <div class="cart-widget">
+                    <a href="/cart" class="cart-link">
+                        <span class="cart-count" id="cart-count">0</span>
+                        <span class="cart-total" id="cart-total">0,00 €</span>
+                        <img src="/static/images/icones/caddie.png" alt="Caddie" class="caddie-icon">
+                    </a>
+                </div>
             </div>
-            <div class="nav-links">
-                <a href="/products.html">Produits</a>
-                <a href="/cart.html">Panier</a>
-                <a href="/profile.html" class="active">Mon Compte</a>
-            </div>
-        </nav>
+        </div>
     </header>
 
-    <main class="profile-container">
-        <!-- Menu latéral -->
-        <aside class="profile-sidebar">
-            <nav class="profile-nav">
-                <ul>
-                    <li>
-                        <a href="#profile" class="active" data-tab="profile">
-                            Informations personnelles
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#orders" data-tab="orders">
-                            Mes commandes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#security" data-tab="security">
-                            Sécurité
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#preferences" data-tab="preferences">
-                            Préférences
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+    <!-- Contenu principal -->
+    <div class="profile-container">
+        <!-- Navigation du profil -->
+        <nav class="profile-nav">
+            <a href="#profile" data-tab="profile" class="active">Profil</a>
+            <a href="#addresses" data-tab="addresses">Adresses</a>
+            <a href="#orders" data-tab="orders">Commandes</a>
+            <a href="#favorites" data-tab="favorites">Favoris</a>
+            <a href="#password" data-tab="password">Mot de passe</a>
+        </nav>
 
-        <!-- Contenu principal -->
+        <!-- Sections du profil -->
         <div class="profile-content">
-            <!-- Section Informations Personnelles -->
+            <!-- Section Profil -->
             <section id="profile" class="profile-section active">
-                <h2>Informations personnelles</h2>
-                <form id="profile-form" class="profile-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstname">Prénom</label>
-                            <input type="text" id="firstname" name="firstname">
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname">Nom</label>
-                            <input type="text" id="lastname" name="lastname">
-                        </div>
+                <h2>Informations du Profil</h2>
+                <form id="profile-form">
+                    <!-- Nom et Prénom -->
+                    <label><strong>Nom:</strong> <input type="text" id="lastname" value="Dupont"></label>
+                    <label><strong>Prénom:</strong> <input type="text" id="firstname" value="Jean"></label>
+
+                    <!-- Adresse actuelle -->
+                    <div class="main-address">
+                        <h3>Adresse Principale</h3>
+                        <p><strong>Adresse:</strong> <span id="main-address-street">12 Rue de la Paix</span></p>
+                        <p><strong>Ville:</strong> <span id="main-address-city">Paris</span></p>
+                        <p><strong>Code postal:</strong> <span id="main-address-zip">75001</span></p>
+                        <p><strong>Pays:</strong> <span id="main-address-country">France</span></p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
+                    <!-- Lien pour gérer les adresses -->
+                    <div class="manage-addresses">
+                        <a href="#addresses" class="manage-addresses-link">Gérer mes adresses</a>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Téléphone</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
+                    <!-- Email et Téléphone -->
+                    <label><strong>Email:</strong> <input type="email" id="email" value="jean.dupont@example.com"></label>
+                    <label><strong>Téléphone:</strong> <input type="text" id="phone" value="0123456789"></label>
 
-                    <button type="submit" class="save-button">
-                        Enregistrer les modifications
-                    </button>
+                    <!-- Bouton de mise à jour -->
+                    <button type="submit">Mettre à jour</button>
                 </form>
+            </section>
+
+            <!-- Section Adresses -->
+            <section id="addresses" class="profile-section">
+                <h2>Gestion des Adresses</h2>
+                <div class="address-list">
+                    <div class="address-card">
+                        <p><strong>Adresse 1</strong></p>
+                        <p>12 Rue de la Paix</p>
+                        <p>75001 Paris</p>
+                        <p>France</p>
+                        <button class="edit-address">Modifier</button>
+                        <button class="delete-address">Supprimer</button>
+                    </div>
+                    <button class="add-address">Ajouter une adresse</button>
+                </div>
             </section>
 
             <!-- Section Commandes -->
             <section id="orders" class="profile-section">
-                <h2>Mes commandes</h2>
+                <h2>Historique des Commandes</h2>
                 <div class="orders-list">
-                    <!-- Les commandes seront injectées ici via JavaScript -->
-                    <div class="no-orders-message" style="display: none;">
-                        Vous n'avez pas encore de commande.
-                    </div>
+                    <p class="no-orders-message">Aucune commande passée.</p>
                 </div>
             </section>
 
-            <!-- Section Sécurité -->
-            <section id="security" class="profile-section">
-                <h2>Sécurité</h2>
-                <form id="password-form" class="profile-form">
-                    <div class="form-group">
-                        <label for="current-password">Mot de passe actuel</label>
-                        <input type="password" id="current-password" name="current-password">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="new-password">Nouveau mot de passe</label>
-                        <input type="password" id="new-password" name="new-password">
-                        <div class="password-strength">
-                            <div class="strength-meter">
-                                <div class="meter-section"></div>
-                                <div class="meter-section"></div>
-                                <div class="meter-section"></div>
-                                <div class="meter-section"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm-password">Confirmer le mot de passe</label>
-                        <input type="password" id="confirm-password" name="confirm-password">
-                    </div>
-
-                    <button type="submit" class="save-button">
-                        Changer le mot de passe
-                    </button>
-                </form>
+            <!-- Section Favoris -->
+            <section id="favorites" class="profile-section">
+                <h2>Mes Favoris</h2>
+                <div class="favorites-list">
+                    <p class="no-favorites-message">Aucun produit favori.</p>
+                </div>
             </section>
 
-            <!-- Section Préférences -->
-            <section id="preferences" class="profile-section">
-                <h2>Préférences</h2>
-                <form id="preferences-form" class="profile-form">
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="newsletter">
-                            Recevoir la newsletter
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="order_updates">
-                            Notifications de commande par email
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="promo_updates">
-                            Recevoir les offres promotionnelles
-                        </label>
-                    </div>
-
-                    <button type="submit" class="save-button">
-                        Enregistrer les préférences
-                    </button>
+            <!-- Section Mot de passe -->
+            <section id="password" class="profile-section">
+                <h2>Changer de mot de passe</h2>
+                <form id="password-form">
+                    <label>Mot de passe actuel: <input type="password" id="current-password"></label>
+                    <label>Nouveau mot de passe: <input type="password" id="new-password"></label>
+                    <label>Confirmer le mot de passe: <input type="password" id="confirm-password"></label>
+                    <button type="submit">Changer</button>
                 </form>
             </section>
         </div>
-    </main>
+    </div>
 
-    <div id="notification-container" class="notification-container"></div>
-
-    <!-- Scripts -->
     <script src="../static/js/profile.js"></script>
 </body>
 </html>

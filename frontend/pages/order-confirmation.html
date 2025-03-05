@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de commande | FMP</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/order-confirmation.css">
+</head>
+<body>
+    <header>
+        <!-- Navigation et en-tête du site -->
+    </header>
+    
+    <main class="confirmation-container">
+        <div class="confirmation-header">
+            <h1>Confirmation de commande</h1>
+            <p>Commande #<span id="order-number">--</span></p>
+            <p class="order-date">Date: <span id="order-date">--</span></p>
+        </div>
+        
+        <div class="confirmation-content">
+            <div class="order-details">
+                <div class="shipping-info">
+                    <h2>Adresse de livraison</h2>
+                    <div id="shipping-address">
+                        <!-- Adresse de livraison -->
+                    </div>
+                </div>
+                
+                <div class="payment-info">
+                    <h2>Méthode de paiement</h2>
+                    <div id="payment-method">
+                        <!-- Méthode de paiement -->
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    <h2>Articles commandés</h2>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Article</th>
+                                <th>Référence</th>
+                                <th>Prix unitaire</th>
+                                <th>Quantité</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-items-list">
+                            <!-- Liste des articles -->
+                        </tbody>
+                        <tfoot id="order-totals">
+                            <!-- Totaux -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="order-actions">
+                <h2>Suivi de commande</h2>
+                <p>Vous recevrez des mails de suivi pour cette commande.</p>
+                <div class="buttons">
+                    <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+                    <a href="/pages/contact.html" class="btn btn-secondary">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <!-- Pied de page -->
+    </footer>
+    
+    <script src="/static/js/order-confirmation.js"></script>
+</body>
+</html>
