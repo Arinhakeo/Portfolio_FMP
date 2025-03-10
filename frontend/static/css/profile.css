@@ -6,39 +6,51 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: white;
-    box-shadow: var(--shadow);
-    margin: auto;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .top-bar {
-    background: var(--light-gray);
-    padding: 0.5rem 0;
+    padding: 1rem 0;
     font-size: 0.9rem;
-    margin-left: 10px;
-    margin-right: 10px;
 }
 
 .top-bar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 0 20px;
 }
 
-.logo img {
-    height: 80px;
-    width: auto;
+.return-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: white;
+    transition: opacity 0.3s;
+}
+
+.return-button:hover {
+    opacity: 0.8;
+}
+
+.return-button img {
+    height: 24px;
 }
 
 .title-profil h1 {
     font-size: 1.5rem;
     margin: 0;
+    color: white;
 }
 
 .cart-widget {
-    position: relative;
-    margin: auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .cart-link {
@@ -46,32 +58,26 @@
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
-    color: var(--text-color);
+    color: white;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background 0.3s;
 }
 
 .cart-link:hover {
-    background: var(--light-gray);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .caddie-icon {
-    height: 50px;
-    width: auto;
+    height: 24px;
 }
 
 .cart-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--secondary-color);
+    background: #ff4757;
     color: white;
     font-size: 0.8rem;
     padding: 0.2rem 0.5rem;
     border-radius: 10px;
-    min-width: 20px;
-    text-align: center;
 }
 
 /* =========================================================================== */
@@ -80,92 +86,169 @@
 
 .profile-container {
     max-width: 1200px;
-    padding: 20px;
+    margin: 2rem auto;
+    padding: 0 20px;
 }
 
 .profile-nav {
     display: flex;
-    justify-content: space-around;
-    background: #cad5e2;
-    padding: 5px;
-    border-radius: 5px;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
-.profile-nav a {
+.profile-nav button {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 8px;
+    background: #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-nav button.active {
+    background: #007bff;
     color: white;
-    text-decoration: none;
-    padding: 10px;
-    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
 }
 
-.profile-nav a.active {
-    border-bottom: 2px solid white;
-}
-h3 {
-    background-color: rgba(201, 200, 200, 0.442);
-    margin-bottom: 10px;
-}
 .profile-section {
     display: none;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.5s ease;
 }
 
 .profile-section.active {
     display: block;
 }
 
-form label {
-    display: block;
-    margin: 10px 0;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-input {
+h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.75rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
 }
 
 .main-address {
-    max-width: 1200px;
-    padding: 20px;
-    background: #ffffff;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 1rem;
 }
 
-.button {
+.btn-primary {
     background: #007bff;
     color: white;
-    padding: 10px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    width: 100%;
+    font-size: 1rem;
+    transition: background 0.3s, transform 0.3s;
 }
 
-button:hover {
-    background: #228dff;
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
 }
 
 .address-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
 }
 
 .address-card {
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
     border: 1px solid #ddd;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.orders-list, .favorites-list {
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
+.address-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-edit, .btn-delete, .btn-add-address {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.btn-edit {
+    background: #28a745;
+    color: white;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-add-address {
+    background: #007bff;
+    color: white;
+}
+
+.btn-edit:hover, .btn-delete:hover, .btn-add-address:hover {
+    transform: translateY(-2px);
 }
 
 .no-orders-message, .no-favorites-message {
     text-align: center;
     color: #888;
+    margin-top: 2rem;
 }

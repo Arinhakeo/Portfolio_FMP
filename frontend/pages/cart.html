@@ -13,9 +13,10 @@
                 <nav class="main-nav">
                     <div class="container">
                         <!-- Logo -->
-                        <div class="logo">
-                            <a href="/">
-                                <img src="/static/images/banners/logo_FMP.jpg" alt="FMP Logo">
+                        <div>
+                            <a href="/" class="return-button">
+                                <img src="/static/images/icones/accueil.png" alt="Accueil-icone">
+                                <span>Retour à l'accueil</span>
                             </a>
                         </div>
 
@@ -56,8 +57,8 @@
                         <!-- Panier -->
                         <div class="cart-widget">
                             <a href="/cart" class="cart-link">
-                                <span class="cart-count" id="cart-count">3</span>
-                                <span class="cart-total" id="cart-total">69,85 €</span>
+                                <span class="cart-count" id="cart-count">0</span>
+                                <span class="cart-total" id="cart-total">0,00 €</span>
                                 <img src="/static/images/icones/caddie.png" alt="Caddie" class="caddie-icon">
                             </a>
                         </div>
@@ -77,97 +78,54 @@
         
         <!-- Alert notification -->
         <div id="alert-container">
-            <div class="alert alert-success">
-                <img src="/static/images/icones/check.png" alt="Success">
-                <div>
-                    <strong>Produit ajouté !</strong> La cartouche HP 305XL a été ajoutée à votre panier.
-                </div>
-            </div>
+            <!-- Les alertes seront ajoutées dynamiquement ici -->
         </div>
         
         <div class="cart-content">
             <!-- Contenu principal du panier -->
             <div>
                 <div class="cart-items">
-                    <h2>Articles (<span id="items-count">3</span>)</h2>
+                    <h2>Articles (<span id="items-count">0</span>)</h2>
                     
                     <!-- Progress bar towards free shipping -->
                     <div class="shipping-progress">
-                        <p class="progress-message">
-                            <strong>Félicitations !</strong> Votre commande bénéficie de la livraison gratuite.
+                        <p class="progress-message" id="shipping-message">
+                            <strong>Plus que 49,00 €</strong> d'achat pour bénéficier de la livraison gratuite.
                         </p>
                         <div class="progress-bar-container">
-                            <div class="progress-bar" style="width: 100%;"></div>
+                            <div class="progress-bar" id="shipping-progress-bar" style="width: 0%;"></div>
                         </div>
                     </div>
                     
                     <!-- Items in cart -->
                     <div id="cart-items-container">
-                        <!-- Item 1 -->
-                        <div class="cart-item" data-id="HP305XL-BK">
-                            <div class="item-image">
-                                <img src="/static/images/products/hp-305xl-black.jpg" alt="Cartouche HP 305XL">
-                            </div>
-                            <div class="item-details">
-                                <h3 class="item-name">Cartouche HP 305XL Noir</h3>
-                                <p class="item-reference">Réf: HP305XL-BK</p>
-                                <div class="item-quantity">
-                                    <button class="decrease-quantity">-</button>
-                                    <input type="number" min="1" value="2" class="quantity-input" data-price="19.95">
-                                    <button class="increase-quantity">+</button>
+                        <!-- Les éléments du panier seront ajoutés dynamiquement ici -->
+                        
+                        <!-- Template pour un élément du panier (invisible) -->
+                        <template id="cart-item-template">
+                            <div class="cart-item" data-id="">
+                                <div class="item-image">
+                                    <img src="" alt="">
+                                </div>
+                                <div class="item-details">
+                                    <h3 class="item-name"></h3>
+                                    <p class="item-reference">Réf: </p>
+                                    <div class="item-quantity">
+                                        <button class="decrease-quantity">-</button>
+                                        <input type="number" min="1" value="1" class="quantity-input" data-price="">
+                                        <button class="increase-quantity">+</button>
+                                    </div>
+                                </div>
+                                <div class="item-price">
+                                    <p class="unit-price"></p>
+                                    <p class="total-price"></p>
+                                    <button class="remove-item">Supprimer</button>
                                 </div>
                             </div>
-                            <div class="item-price">
-                                <p class="unit-price">19,95 € l'unité</p>
-                                <p class="total-price">39,90 €</p>
-                                <button class="remove-item">Supprimer</button>
-                            </div>
-                        </div>
+                        </template>
                         
-                        <!-- Item 2 -->
-                        <div class="cart-item" data-id="CAN-PG545XL">
-                            <div class="item-image">
-                                <img src="/static/images/products/canon-pg545xl.jpg" alt="Cartouche Canon PG-545XL">
-                            </div>
-                            <div class="item-details">
-                                <h3 class="item-name">Cartouche Canon PG-545XL Noir</h3>
-                                <p class="item-reference">Réf: CAN-PG545XL</p>
-                                <div class="item-quantity">
-                                    <button class="decrease-quantity">-</button>
-                                    <input type="number" min="1" value="1" class="quantity-input" data-price="17.95">
-                                    <button class="increase-quantity">+</button>
-                                </div>
-                            </div>
-                            <div class="item-price">
-                                <p class="unit-price">17,95 € l'unité</p>
-                                <p class="total-price">17,95 €</p>
-                                <button class="remove-item">Supprimer</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Item 3 -->
-                        <div class="cart-item" data-id="HP-PHOTO-PP50">
-                            <div class="item-image">
-                                <img src="/static/images/products/hp-photo-paper.jpg" alt="Pack Papier photo">
-                            </div>
-                            <div class="item-details">
-                                <h3 class="item-name">Papier Photo HP Premium Plus - 50 feuilles</h3>
-                                <p class="item-reference">Réf: HP-PHOTO-PP50</p>
-                                <div class="item-quantity">
-                                    <button class="decrease-quantity">-</button>
-                                    <input type="number" min="1" value="1" class="quantity-input" data-price="12.00">
-                                    <button class="increase-quantity">+</button>
-                                </div>
-                            </div>
-                            <div class="item-price">
-                                <p class="unit-price">12,00 € l'unité</p>
-                                <p class="total-price">12,00 €</p>
-                                <button class="remove-item">Supprimer</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Template for empty cart message -->
-                        <div id="empty-cart" class="empty-cart" style="display: none;">
+                        <!-- Message panier vide -->
+                        <div id="empty-cart" class="empty-cart">
                             <p>Votre panier est vide</p>
                             <a href="/products" class="btn btn-primary">Découvrir nos produits</a>
                         </div>
@@ -179,36 +137,14 @@
                     <h3>Vous pourriez aussi être intéressé par</h3>
                     
                     <div class="promo-banner">
-                        <img src="/static/images/icones/promotion.png" alt="Promotion">
+                        <img src="/static/images/icones/promotion.gif" alt="Promotion">
                         <div>
                             <p><strong>Offre spéciale :</strong> Achetez 3 cartouches identiques et obtenez 10% de réduction supplémentaire sur votre commande !</p>
                         </div>
                     </div>
                     
-                    <div class="suggestions-grid">
-                        <!-- Suggestion 1 -->
-                        <div class="suggestion-card" data-id="HP305-CL">
-                            <img src="/static/images/products/hp-305-color.jpg" alt="Cartouche HP 305 Couleur">
-                            <h4>Cartouche HP 305 Couleur</h4>
-                            <p>18,50 €</p>
-                            <button class="add-to-cart-btn">Ajouter au panier</button>
-                        </div>
-                        
-                        <!-- Suggestion 2 -->
-                        <div class="suggestion-card" data-id="HP305-PACK">
-                            <img src="/static/images/products/hp-305-pack.jpg" alt="Pack Économique HP 305">
-                            <h4>Pack Éco HP 305 (Noir + Couleur)</h4>
-                            <p>36,90 €</p>
-                            <button class="add-to-cart-btn">Ajouter au panier</button>
-                        </div>
-                        
-                        <!-- Suggestion 3 -->
-                        <div class="suggestion-card" data-id="HP-PAPER-500">
-                            <img src="/static/images/products/hp-everyday-paper.jpg" alt="Papier HP Everyday">
-                            <h4>Papier HP Everyday - 500 feuilles</h4>
-                            <p>6,95 €</p>
-                            <button class="add-to-cart-btn">Ajouter au panier</button>
-                        </div>
+                    <div class="suggestions-grid" id="suggestions-container">
+                        <!-- Les suggestions seront ajoutées dynamiquement -->
                     </div>
                 </div>
             </div>
@@ -220,28 +156,28 @@
                 <div class="summary-details">
                     <div class="summary-row">
                         <span>Sous-total HT:</span>
-                        <span id="subtotal-ht">58,21 €</span>
+                        <span id="subtotal-ht">0,00 €</span>
                     </div>
                     <div class="summary-row">
                         <span>TVA (20%):</span>
-                        <span id="tax-amount">11,64 €</span>
+                        <span id="tax-amount">0,00 €</span>
                     </div>
                     <div class="summary-row">
                         <span>Sous-total TTC:</span>
-                        <span id="subtotal-ttc">69,85 €</span>
+                        <span id="subtotal-ttc">0,00 €</span>
                     </div>
                     <div class="summary-row shipping-row">
                         <span>Frais de livraison:</span>
-                        <span id="shipping-cost">0,00 €</span>
-                        <small id="free-shipping-notice">Livraison gratuite (commande > 49€)</small>
+                        <span id="shipping-cost">4,95 €</span>
+                        <small id="free-shipping-notice">Livraison gratuite à partir de 49€</small>
                     </div>
                     <div class="summary-row total-row">
                         <span>Total:</span>
-                        <span id="total-amount">69,85 €</span>
+                        <span id="total-amount">0,00 €</span>
                     </div>
                 </div>
                 
-                <button id="checkout-btn" class="btn btn-primary btn-checkout">
+                <button id="checkout-btn" class="btn btn-primary btn-checkout" disabled>
                     Procéder au paiement
                 </button>
                 

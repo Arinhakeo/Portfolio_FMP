@@ -42,8 +42,13 @@ def create_app(config_name='default'):
     """
     Crée et configure l'instance de l'application Flask
     """
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path='/static', static_folder='static')
     
+    upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+    os.makedirs(os.path.join(upload_folder, 'products'), exist_ok=True)
+    os.makedirs(os.path.join(upload_folder, 'temp'), exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = upload_folder
+
     # ============================================================================
     #                         ROUTE DE DEBUG ADMIN                               
     # ============================================================================
@@ -173,7 +178,8 @@ def create_app(config_name='default'):
             "origins": ["http://localhost:5000", "http://127.0.0.1:5000"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
+            "supports_credentials": True,
+            "allow_redirects": True
         }
     })
 
@@ -302,6 +308,14 @@ def create_app(config_name='default'):
             Response: Fichier statique demandé
         """
         return send_from_directory(app.static_folder, filename)
+    
+    @app.route('/static/images/products/<path:filename>')
+    def serve_backend_images(filename):
+        """
+        Sert les images stockées dans le dossier backend
+        """
+        backend_images_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'images', 'products')
+        return send_from_directory(backend_images_path, filename)
 
     # ============================================================================
     #                         ROUTES AUTHENTIFICATION                             
@@ -584,7 +598,18 @@ def create_app(config_name='default'):
             })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-
+    # ============================================================================
+    #                         BARRE DE RECHECHE                                  
+    # ============================================================================
+    @app.route('/pages/search-results.html')
+    def search_results_page():
+        """Sert la page de résultats de recherche"""
+        try:
+            return send_from_directory(os.path.join(app.template_folder, 'pages'), 'search-results.html')
+        except Exception as e:
+            logger.error(f"Erreur page résultats recherche: {str(e)}")
+            return "Page non trouvée", 404
+    
     # ============================================================================
     #                         INITIALISATION BDD                                  
     # ============================================================================

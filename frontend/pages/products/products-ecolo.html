@@ -1,20 +1,74 @@
-<!-- frontend/pages/products.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMP - Nos Cartouches d'Imprimante Ecologiques</title>
-    <meta name="description" content="Découvrez notre large gamme de cartouches d'imprimantes. Compatibles et originales pour toutes les marques.">
-    
-    <!-- Styles -->
+    <title>FMP - Cartouches Origines</title>
+    <meta name="description" content="Découvrez notre gamme de cartouches d'origines. Filtrez par catégorie : Jet d'encre ou Laser/Toner.">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/products.css">
+    <link rel="stylesheet" href="/static/css/products-fixed.css">
+    <!-- Ajout du CSS pour les corrections -->
+    <style>
+        /* CSS pour centrer la modal et fixer le footer - intégré directement pour faciliter le test */
+        
+        /* Footer fixe en bas de page */
+        .main-footer {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 1rem 1rem 1rem;
+            position: fixed; /* Fixe le footer */
+            bottom: 0; /* Au bas de la fenêtre */
+            width: 100%; /* Prend toute la largeur */
+            z-index: 10; /* S'assure qu'il est au-dessus des autres éléments */
+        }
+        
+        /* Ajouter un padding-bottom au body pour compenser le footer fixe */
+        body {
+            padding-bottom: 200px; /* Ajustez cette valeur en fonction de la hauteur de votre footer */
+        }
+        
+        /* Conteneur modal amélioré - centrage */
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+        }
+        
+        .modal-container {
+            position: absolute;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 85vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 1001;
+        }
+    </style>
 </head>
 <body>
-    <!-- En-tête (identique à index.html) -->
-    <!-- =================================================================== -->
-    <!-- En-tête -->
-    <!-- =================================================================== -->
     <header class="main-header">
         <!-- Barre supérieure -->
         <div class="top-bar">
@@ -23,12 +77,12 @@
                 <nav class="main-nav">
                     <div class="container">
                         <!-- Logo -->
-                        <div class="logo">
-                            <a href="/">
-                                <img src="/static/images/banners/logo_FMP.jpg" alt="FMP Logo">
+                        <div>
+                            <a href="/" class="return-button">
+                                <img src="/static/images/icones/accueil.png" alt="Accueil-icone">
+                                <span>Retour à l'accueil</span>
                             </a>
                         </div>
-
                         <!-- Barre de recherche -->
                         <div class="search-bar">
                             <form id="search-form">
@@ -43,32 +97,32 @@
                             </form>
                         </div>
 
-                            <!-- User Navigation -->
-                <!-- Liens de connexion et d'inscription (visibles uniquement si l'utilisateur n'est pas connecté) -->
-                <div id="auth-container">
-                    <a href="/login" id="login-link" class="auth-link">
-                        Connexion
-                    </a>
-                    <a href="/register" id="register-link" class="auth-link">
-                        Inscription
-                    </a>
-                </div>
-
-                <!-- Menu utilisateur (visible uniquement si l'utilisateur est connecté) -->
-                <div id="user-nav" class="user-nav" style="display: none;">
-                    <a href="/pages/profile.html">
-                    <button id="profile-button" class="nav-button">
-                        <img src="/static/images/icones/user.png" class="user-icon">
-                        <div class="profile-text">
-                            <span class="profile-label">Mon Compte</span>
-                            <span class="username">Nom d'utilisateur</span>
+                        <!-- User Navigation -->
+                        <!-- Liens de connexion et d'inscription (visibles uniquement si l'utilisateur n'est pas connecté) -->
+                        <div id="auth-container">
+                            <a href="/login" id="login-link" class="auth-link">
+                                Connexion
+                            </a>
+                            <a href="/register" id="register-link" class="auth-link">
+                                Inscription
+                            </a>
                         </div>
-                    </button>
-                    </a>
-                    <button id="logout-button" class="nav-button" onclick="mainManager.handleLogout()">
-                        Déconnexion
-                    </button>
-                </div>
+
+                        <!-- Menu utilisateur (visible uniquement si l'utilisateur est connecté) -->
+                        <div id="user-nav" class="user-nav" style="display: none;">
+                            <a href="/pages/profile.html">
+                            <button id="profile-button" class="nav-button">
+                                <img src="/static/images/icones/user.png" class="user-icon">
+                                <div class="profile-text">
+                                    <span class="profile-label">Mon Compte</span>
+                                    <span class="username">Nom d'utilisateur</span>
+                                </div>
+                            </button>
+                            </a>
+                            <button id="logout-button" class="nav-button" onclick="mainManager.handleLogout()">
+                                Déconnexion
+                            </button>
+                        </div>
 
                         <!-- Panier -->
                         <div class="cart-widget">
@@ -87,225 +141,225 @@
     <!-- Contenu principal -->
     <main class="products-page">
         <div class="container">
-            <!-- Fil d'Ariane -->
-            <nav class="breadcrumb">
-            </nav>
-
             <!-- En-tête de la page -->
             <div class="page-header">
-                <h1>Nos Cartouches d'Imprimante Ecologiques</h1>
-                <div class="view-options">
-                    <!-- Options d'affichage -->
-                    <div class="display-mode">
-                        <button
-                            class="view-btn active"
-                            data-view="grid"
-                            onclick="productsManager.changeView('grid')"
-                        >
-                            <i class="icon grid-icon"></i>
-                        </button>
-                        <button
-                            class="view-btn"
-                            data-view="list"
-                            onclick="productsManager.changeView('list')"
-                        >
-                            <i class="icon list-icon"></i>
-                        </button>
-                    </div>
-                    <!-- Tri -->
-                    <select
-                        id="sort-select"
-                        onchange="productsManager.changeSort(this.value)"
-                    >
-                        <option value="popularity">Popularité</option>
-                        <option value="price_asc">Prix croissant</option>
-                        <option value="price_desc">Prix décroissant</option>
-                        <option value="name_asc">Nom A-Z</option>
-                        <option value="name_desc">Nom Z-A</option>
-                    </select>
-                </div>
+                <h1>Cartouches Originales</h1>
+                <p>Cartouches Originales pour toutes les marques.</p>
             </div>
 
-            <!-- Zone principale -->
-            <div class="products-layout">
-                <!-- Filtres -->
-                <aside class="filters-sidebar">
-                    <div class="filters-header">
-                        <h2>Filtres</h2>
-                        <button
-                            class="clear-filters"
-                            onclick="productsManager.clearFilters()"
-                        >
-                            Réinitialiser
-                        </button>
-                    </div>
-
-                    <!-- Prix -->
-                    <div class="filter-group">
-                        <h3>Prix</h3>
-                        <div class="price-range">
-                            <input
-                                type="range"
-                                id="price-range"
-                                min="0"
-                                max="100"
-                                step="5"
-                                value="100"
-                                oninput="productsManager.updatePriceFilter(this.value)"
-                            >
-                            <div class="price-inputs">
-                                <input
-                                    type="number"
-                                    id="min-price"
-                                    placeholder="Min"
-                                    min="0"
-                                >
-                                <span>-</span>
-                                <input
-                                    type="number"
-                                    id="max-price"
-                                    placeholder="Max"
-                                    min="0"
-                                >
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Marques -->
-                    <div class="filter-group">
-                        <h3>Marques</h3>
-                        <div class="filter-search">
-                            <input
-                                type="text"
-                                placeholder="Rechercher une marque"
-                                oninput="productsManager.filterBrands(this.value)"
-                            >
-                        </div>
-                        <div class="checkbox-list" id="brands-list">
-                            <!-- Les marques seront injectées ici -->
-                        </div>
-                    </div>
-
-                    <!-- Catégories -->
-                    <div class="filter-group">
-                        <h3>Catégories</h3>
-                        <div class="checkbox-list" id="categories-list">
-                            <!-- Les catégories seront injectées ici -->
-                        </div>
-                    </div>
-
-                    <!-- Disponibilité -->
-                    <div class="filter-group">
-                        <h3>Disponibilité</h3>
-                        <label class="checkbox-label">
-                            <input
-                                type="checkbox"
-                                id="in-stock-only"
-                                onchange="productsManager.toggleInStock(this.checked)"
-                            >
-                            En stock uniquement
-                        </label>
-                    </div>
-                </aside>
-
-                <!-- Liste des produits -->
-                <div class="products-content">
-                    <!-- Résumé des filtres actifs -->
-                    <div class="active-filters" id="active-filters">
-                        <!-- Les filtres actifs seront injectés ici -->
-                    </div>
-
-                    <!-- Grille des produits -->
-                    <div
-                        class="products-grid"
-                        id="products-container"
-                        data-view="grid"
-                    >
-                        <!-- Les produits seront injectés ici -->
-                    </div>
-
-                    <!-- Message "Aucun produit" -->
-                    <div
-                        class="no-products"
-                        id="no-products"
-                        style="display: none;"
-                    >
-                        <i class="icon search-icon"></i>
-                        <h3>Aucun produit trouvé</h3>
-                        <p>Essayez de modifier vos filtres de recherche</p>
-                        <button
-                            class="btn"
-                            onclick="productsManager.clearFilters()"
-                        >
-                            Réinitialiser les filtres
-                        </button>
-                    </div>
-
-                    <!-- Loader -->
-                    <div
-                        class="products-loader"
-                        id="products-loader"
-                        style="display: none;"
-                    >
+            <!-- Liste des produits -->
+            <div class="products-content">
+                <!-- Grille des produits - UN SEUL CONTAINER UNIQUE -->
+                <div class="products-grid" id="products-container">
+                    <!-- Les produits seront injectés ici dynamiquement -->
+                    <div class="loading-indicator">
                         <div class="loader"></div>
                         <p>Chargement des produits...</p>
                     </div>
+                </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination" id="pagination">
-                        <!-- La pagination sera injectée ici -->
-                    </div>
+                <!-- Message "Aucun produit" -->
+                <div class="no-products" id="no-products" style="display: none;">
+                    <i class="icon search-icon"></i>
+                    <h3>Aucun produit trouvé</h3>
+                    <p>Essayez de modifier vos filtres de recherche.</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Pied de page (identique à index.html) -->
+    <!-- Pied de page -->
     <footer class="main-footer">
-        <!-- ... contenu du pied de page ... -->
-    </footer>
+        <div class="container">
+            <div class="footer-grid">
+                <!-- À propos -->
+                <div class="footer-section">
+                    <h3>À Propos de FMP</h3>
+                    <p>Votre spécialiste en cartouches d'imprimantes depuis 2024.</p>
+                    <div class="social-links">
+                        <!-- Lien Facebook -->
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/static/images/icones/facebook.png" alt="Facebook">
+                        </a>
+                        <!-- Lien Twitter -->
+                        <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/static/images/icones/twitter.png" alt="Twitter">
+                        </a>
+                        <!-- Lien Instagram -->
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/static/images/icones/instagram.png" alt="Instagram">
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Templates -->
-    <template id="product-card-template">
-        <div class="product-card">
-            <div class="product-image">
-                <img src="" alt="">
-                <div class="product-badges">
-                    <span class="badge new-badge">Nouveau</span>
-                    <span class="badge sale-badge">Promo</span>
+                <!-- Navigation -->
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="/products" data-path="products">Tous nos produits</a></li>
+                        <li><a href="/brands" data-path="brands">Nos marques</a></li>
+                        <li><a href="/about" data-path="about">À propos</a></li>
+                        <li><a href="/contact" data-path="contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Informations -->
+                <div class="footer-section">
+                    <h3>Informations</h3>
+                    <ul>
+                        <li><a href="/shipping" data-path="shipping">Livraison</a></li>
+                        <li><a href="/returns" data-path="returns">Retours</a></li>
+                        <li><a href="/faq" data-path="faq">FAQ</a></li>
+                        <li><a href="/terms" data-path="terms">CGV</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <address class="contact-info">
+                        <p>
+                            <i class="icon map-icon"></i>
+                            Place de la Liberté<br>
+                            53000 Laval, France
+                        </p>
+                        <p>
+                            <i class="icon phone-icon"></i>
+                            06 06 77 44 39
+                        </p>
+                        <p>
+                            <i class="icon mail-icon"></i>
+                            contact@fmp.com
+                        </p>
+                    </address>
                 </div>
             </div>
-            <div class="product-info">
-                <h3 class="product-name">
-                    <a href=""></a>
-                </h3>
-                <div class="product-brand"></div>
-                <div class="product-price">
-                    <span class="current-price"></span>
-                    <span class="original-price"></span>
-                    <span class="discount-tag"></span>
-                </div>
-                <div class="product-stock"></div>
-            </div>
-            <div class="product-actions">
-                <button class="add-to-cart-btn">
-                    Ajouter au panier
-                </button>
-                <button class="quick-view-btn">
-                    <i class="icon eye-icon"></i>
-                </button>
+
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p>&copy; 2025 FMP - For My Printer. Tous droits réservés.</p>
             </div>
         </div>
-    </template>
+    </footer>
+
+    <!-- Modal produit -->
+    <div id="product-modal" class="product-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close-btn">&times;</button>
+            
+            <div class="modal-content">
+                <!-- Message de chargement -->
+                <div id="modal-loading" class="loading-indicator">
+                    <div class="loader"></div>
+                    <p>Chargement du produit...</p>
+                </div>
+
+                <!-- Contenu du produit (affiché une fois chargé) -->
+                <div id="modal-product-content" class="product-content" style="display: none;">
+                    <!-- En-tête du produit -->
+                    <div class="product-header">
+                        <h1 id="modal-product-title">Nom du produit</h1>
+                        <div class="product-reference">
+                            <span>Référence: </span>
+                            <span id="modal-product-sku">XXX-YYY-ZZZ</span>
+                        </div>
+                    </div>
+
+                    <!-- Détails du produit -->
+                    <div class="product-details">
+                        <!-- Colonne gauche (image) -->
+                        <div class="product-image-column">
+                            <div class="product-image-container">
+                                <img id="modal-product-main-image" src="/static/images/products/placeholder.jpg" alt="Image produit">
+                            </div>
+                            <div class="product-thumbnails" id="modal-product-thumbnails">
+                                <!-- Les vignettes seront ajoutées ici -->
+                            </div>
+                        </div>
+
+                        <!-- Colonne droite (informations) -->
+                        <div class="product-info-column">
+                            <!-- Prix et disponibilité -->
+                            <div class="product-price-section">
+                                <div class="product-price">
+                                    <span id="modal-product-price">0.00</span> €
+                                </div>
+                                <div class="product-availability" id="modal-product-availability">
+                                    <!-- Disponibilité générée dynamiquement -->
+                                </div>
+                            </div>
+
+                            <!-- Caractéristiques principales -->
+                            <div class="product-key-features">
+                                <h3>Caractéristiques principales</h3>
+                                <dl id="modal-product-specifications">
+                                    <!-- Les spécifications seront ajoutées ici -->
+                                </dl>
+                            </div>
+
+                            <!-- Description courte -->
+                            <div class="product-short-description">
+                                <p id="modal-product-short-desc"></p>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="product-actions">
+                                <div class="quantity-selector">
+                                    <button class="quantity-btn minus" id="modal-decrease-quantity">-</button>
+                                    <input type="number" id="modal-product-quantity" min="1" value="1">
+                                    <button class="quantity-btn plus" id="modal-increase-quantity">+</button>
+                                </div>
+                                <button id="modal-add-to-cart" class="btn btn-primary add-to-cart-btn">
+                                    <img src="/static/images/icones/caddie-white.png" alt="Panier" class="cart-icon">
+                                    Ajouter au panier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Onglets d'information -->
+                    <div class="product-tabs">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="description">Description</button>
+                            <button class="tab-btn" data-tab="compatibility">Imprimantes compatibles</button>
+                            <button class="tab-btn" data-tab="specifications">Caractéristiques détaillées</button>
+                        </div>
+                        <div class="tab-content">
+                            <!-- Onglet Description -->
+                            <div class="tab-pane active" id="modal-tab-description">
+                                <div id="modal-product-description"></div>
+                            </div>
+                            
+                            <!-- Onglet Compatibilité -->
+                            <div class="tab-pane" id="modal-tab-compatibility">
+                                <h3>Imprimantes compatibles</h3>
+                                <div id="modal-printer-compatibility" class="printer-list">
+                                    <!-- Liste des imprimantes compatibles sera générée ici -->
+                                </div>
+                            </div>
+                            
+                            <!-- Onglet Spécifications détaillées -->
+                            <div class="tab-pane" id="modal-tab-specifications">
+                                <h3>Caractéristiques techniques</h3>
+                                <table class="specs-table" id="modal-full-specifications">
+                                    <!-- Tableau des spécifications complètes sera généré ici -->
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message d'erreur -->
+                <div id="modal-error-message" class="error-message" style="display: none;">
+                    <p>Désolé, nous n'avons pas pu charger les informations du produit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
-    <script type="module" src="/static/js/main.js"></script>
-    <script type="module" src="/static/js/products.js"></script>
-            <script src="/static/js/auth.js"></script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    checkLoginStatus();
-                });
-            </script>
+    <!-- Utiliser un seul script pour charger les produits -->
+    <script src="/static/js/category-products.js"></script>
 </body>
 </html>

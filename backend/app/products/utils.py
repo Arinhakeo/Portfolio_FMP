@@ -6,7 +6,7 @@ from datetime import datetime
 from PIL import Image
 from flask import current_app
 from werkzeug.utils import secure_filename
-
+from app.products.models import Product, Category, Brand
 # Configuration
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 IMAGE_SIZES = {
@@ -135,19 +135,21 @@ def save_product_image(file):
     except Exception as e:
         raise ValueError(f'Erreur lors de la sauvegarde de l\'image: {str(e)}')
 
-def delete_product_image(image_paths):
-    """Supprime toutes les versions d'une image.
-    
-    Args:
-        image_paths (dict): Chemins des différentes versions
-    """
-    for path in image_paths.values():
-        try:
-            full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], path)
-            if os.path.exists(full_path):
-                os.remove(full_path)
-        except Exception as e:
-            current_app.logger.error(f'Erreur lors de la suppression de {path}: {str(e)}')
+def delete_product_image(url):
+    try:
+        # Chemin du fichier
+        file_path = os.path.join(current_app.root_path, 'static', url.lstrip('/static/'))
+        
+        # Vérifier si le fichier existe avant de tenter de le supprimer
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return True
+        else:
+            current_app.logger.warning(f"Fichier image introuvable: {file_path}")
+            return False
+    except Exception as e:
+        current_app.logger.error(f"Erreur lors de la suppression de l'image: {str(e)}")
+        return False
 
 def get_product_stock_status(product):
     """Détermine le statut du stock d'un produit.
@@ -230,57 +232,57 @@ def format_price(price, currency='EUR'):
 class ProductSearchBuilder:
     """Constructeur de requêtes de recherche de produits."""
     
-    def __init__(self, base_query):
-        self.query = base_query
+def __init__(self, base_query):
+    self.query = base_query
         
-    def with_category(self, category_slug):
-        """Filtre par catégorie."""
-        if category_slug:
-            self.query = self.query.join(Category) \
-                                .filter(Category.slug == category_slug)
+def with_category(self, category_slug):
+    """Filtre par catégorie."""
+    if category_slug:
+        self.query = self.query.join(Category) \
+                            .filter(Category.slug == category_slug)
         return self
         
-    def with_brand(self, brand_slug):
-        """Filtre par marque."""
-        if brand_slug:
-            self.query = self.query.join(Brand) \
-                                .filter(Brand.slug == brand_slug)
-        return self
+def with_brand(self, brand_slug):
+    """Filtre par marque."""
+    if brand_slug:
+        self.query = self.query.join(Brand) \
+                            .filter(Brand.slug == brand_slug)
+    return self
         
-    def with_price_range(self, min_price=None, max_price=None):
-        """Filtre par fourchette de prix."""
-        if min_price is not None:
-            self.query = self.query.filter(Product.price >= min_price)
-        if max_price is not None:
-            self.query = self.query.filter(Product.price <= max_price)
-        return self
+def with_price_range(self, min_price=None, max_price=None):
+    """Filtre par fourchette de prix."""
+    if min_price is not None:
+        self.query = self.query.filter(Product.price >= min_price)
+    if max_price is not None:
+        self.query = self.query.filter(Product.price <= max_price)
+    return self
         
-    def with_stock_status(self, in_stock_only=False):
-        """Filtre selon le statut du stock."""
-        if in_stock_only:
-            self.query = self.query.filter(Product.stock_quantity > 0)
-        return self
+def with_stock_status(self, in_stock_only=False):
+    """Filtre selon le statut du stock."""
+    if in_stock_only:
+        self.query = self.query.filter(Product.stock_quantity > 0)
+    return self
         
-    def with_search(self, search_term):
-        """Recherche dans le nom et la description."""
-        if search_term:
-            search = f"%{search_term}%"
-            self.query = self.query.filter(
-                (Product.name.ilike(search)) |
-                (Product.description.ilike(search)) |
-                (Product.sku.ilike(search))
-            )
-        return self
+def with_search(self, search_term):
+    """Recherche dans le nom et la description."""
+    if search_term:
+        search = f"%{search_term}%"
+        self.query = self.query.filter(
+            (Product.name.ilike(search)) |
+            (Product.description.ilike(search)) |
+            (Product.sku.ilike(search))
+        )
+    return self
         
-    def with_sorting(self, sort_by='name', order='asc'):
-        """Applique le tri."""
-        if hasattr(Product, sort_by):
-            sort_column = getattr(Product, sort_by)
-            if order == 'desc':
-                sort_column = sort_column.desc()
-            self.query = self.query.order_by(sort_column)
-        return self
+def with_sorting(self, sort_by='name', order='asc'):
+    """Applique le tri."""
+    if hasattr(Product, sort_by):
+        sort_column = getattr(Product, sort_by)
+        if order == 'desc':
+            sort_column = sort_column.desc()
+        self.query = self.query.order_by(sort_column)
+    return self
         
-    def build(self):
-        """Retourne la requête construite."""
-        return self.query
+def build(self):
+    """Retourne la requête construite."""
+    return self.query

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de recherche - FMP</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/products.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/marque.css">
+
+</head>
+    <!-- =================================================================== -->
+    <!-- En-tête -->
+    <!-- =================================================================== -->
+    <header class="main-header">
+        <!-- Barre supérieure -->
+        <div class="top-bar">
+            <div class="container">
+                <!-- Navigation principale -->
+                <nav class="main-nav">
+                    <div class="container">
+                        <!-- Logo -->
+                        <div>
+                            <a href="/" class="return-button">
+                                <img src="/static/images/icones/accueil.png" alt="Accueil-icone">
+                                <span>Retour à l'accueil</span>
+                            </a>
+                        </div>
+                        <!-- Barre de recherche -->
+                        <div class="search-bar">
+                            <form id="search-form">
+                                <input type="text"
+                                    id="search-input"
+                                    name="q"
+                                    placeholder="Rechercher une cartouche..."
+                                    autocomplete="off">
+                                <button type="submit">
+                                    <img src="/static/images/icones/chercher.png" alt="Rechercher">
+                                </button>
+                            </form>
+                        </div>
+
+                            <!-- User Navigation -->
+                <!-- Liens de connexion et d'inscription (visibles uniquement si l'utilisateur n'est pas connecté) -->
+                <div id="auth-container">
+                    <a href="/login" id="login-link" class="auth-link">
+                        Connexion
+                    </a>
+                    <a href="/register" id="register-link" class="auth-link">
+                        Inscription
+                    </a>
+                </div>
+
+                <!-- Menu utilisateur (visible uniquement si l'utilisateur est connecté) -->
+                <div id="user-nav" class="user-nav" style="display: none;">
+                    <a href="/pages/profile.html">
+                    <button id="profile-button" class="nav-button">
+                        <img src="/static/images/icones/user.png" class="user-icon">
+                        <div class="profile-text">
+                            <span class="profile-label">Mon Compte</span>
+                            <span class="username">Nom d'utilisateur</span>
+                        </div>
+                    </button>
+                    </a>
+                    <button id="logout-button" class="nav-button" onclick="mainManager.handleLogout()">
+                        Déconnexion
+                    </button>
+                </div>
+
+                        <!-- Panier -->
+                        <div class="cart-widget">
+                            <a href="/cart" class="cart-link">
+                                <span class="cart-count" id="cart-count">0</span>
+                                <span class="cart-total" id="cart-total">0,00 €</span>
+                                <img src="/static/images/icones/caddie.png" alt="Caddie" class="caddie-icon">
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+<body>
+    <!-- En-tête (header) - Copiez celui de vos autres pages -->
+    
+    <main class="main-content">
+        <div class="container">
+            <section class="search-results-section">
+                <h1 class="section-title">Résultats de votre recherche</h1>
+                <div class="search-query">
+                    <p>Résultats pour: <span id="search-query-display"></span></p>
+                </div>
+                
+                <div class="search-results-count" id="results-count"></div>
+                
+                <div class="product-grid" id="search-results">
+                    <!-- Les résultats seront insérés ici -->
+                </div>
+                
+                <div class="no-results" id="no-results" style="display: none;">
+                    <p>Aucun résultat trouvé pour votre recherche.</p>
+                    <p>Essayez avec d'autres mots clés ou consultez nos <a href="/pages/products.html">catégories</a>.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- À propos -->
+                <div class="footer-section">
+                    <h3>À Propos de FMP</h3>
+                    <p>Votre spécialiste en cartouches d'imprimantes depuis 2024.</p>
+                    <div class="social-links">
+                        <a href="#" target="_blank" rel="noopener">
+                            <i class="icon facebook-icon"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener">
+                            <i class="icon twitter-icon"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener">
+                            <i class="icon instagram-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="/products" data-path="products">Tous nos produits</a></li>
+                        <li><a href="/brands" data-path="brands">Nos marques</a></li>
+                        <li><a href="/about" data-path="about">À propos</a></li>
+                        <li><a href="/contact" data-path="contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Informations -->
+                <div class="footer-section">
+                    <h3>Informations</h3>
+                    <ul>
+                        <li><a href="/shipping" data-path="shipping">Livraison</a></li>
+                        <li><a href="/returns" data-path="returns">Retours</a></li>
+                        <li><a href="/faq" data-path="faq">FAQ</a></li>
+                        <li><a href="/terms" data-path="terms">CGV</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <address class="contact-info">
+                        <p>
+                            <i class="icon map-icon"></i>
+                            Place de la Liberté<br>
+                            53000 Laval, France
+                        </p>
+                        <p>
+                            <i class="icon phone-icon"></i>
+                            06 06 77 44 39
+                        </p>
+                        <p>
+                            <i class="icon mail-icon"></i>
+                            contact@fmp.com
+                        </p>
+                    </address>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p>&copy; 2025 FMP - For My Printer. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+        <!-- =================================================================== -->
+    <!-- Initialisation de l'application -->
+    <!-- =================================================================== -->
+    <script type="module">
+        import { initializeApp } from '/static/js/init.js';
+        
+        // Attendre le chargement du DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser l'application
+            initializeApp();
+        });
+    </script>
+    <script type="module" src="/static/js/search.js"></script>
+    <script type="module" src="/static/js/session.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
+    <script type="module" src="/static/js/search-results.js"></script>
+    <script type="module">
+        import { initializeApp } from '/static/js/init.js';
+        
+        // Attendre le chargement du DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser l'application
+            initializeApp();
+        });
+    </script>
+    
+</body>
+</html>

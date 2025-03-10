@@ -96,14 +96,14 @@
 
 .nav-button {
     background: none; /* Pas de fond */
-    border: 1px; /* Pas de bordure */
+    border: 2px; /* Pas de bordure */
     color: #1b49ac; /* Couleur du texte */
     cursor: pointer; /* Curseur en forme de main */
     display: flex;
     align-items: center;
     padding: 8px 12px; /* Espacement interne */
     font-size: 15px; /* Taille de la police */
-    transition: background-color 0.3s ease; /* Transition fluide */
+    transition: background-color 01s ease; /* Transition fluide */
 }
 
 .nav-button:hover {
@@ -125,6 +125,7 @@
 .nav-button .icon {
     margin-right: 20px; /* Espace entre l'icône et le texte */
     size: 3px; /* Taille de l'icône */
+    background-color: #1b49ac;
 
 }
 

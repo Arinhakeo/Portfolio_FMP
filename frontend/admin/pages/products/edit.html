@@ -4,30 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FMP Admin - Édition de Produit</title>
+    <!-- Feuilles de style CSS -->
     <link rel="stylesheet" href="/static/css/css_admin/admin.css">
     <link rel="stylesheet" href="/static/css/css_admin/forms.css">
-    
-    <!-- Vérification admin -->
-    <script type="module">
-        import { session } from '/static/js/session.js';
-        
-        // Vérification au chargement de la page
-        document.addEventListener('DOMContentLoaded', () => {
-            // Vérification du statut admin
-            const userData = session.getUserData();
-            console.log("Données utilisateur:", userData);
-            
-            if (!session.isAuthenticated()) {
-                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
-                return;
-            }
-            
-            if (!userData?.is_admin) {
-                window.location.href = '/pages/login.html?message=admin_required';
-                return;
-            }
-        });
-    </script>
 </head>
 <body>
     <!-- Header fixe -->
@@ -61,7 +40,7 @@
                 <img src="/static/images/icones/user3.png" alt="Utilisateurs">
                 <span>Utilisateurs</span>
             </a>
-            <a href="/logout" class="nav-link" id="logout-link">
+            <a href="#" id="logout-btn" class="nav-link">
                 <img src="/static/images/icones/logout.png" alt="Déconnexion">
                 <span>Déconnexion</span>
             </a>
@@ -123,7 +102,7 @@
                         <!-- Catégorie -->
                         <div class="form-group">
                             <label for="category_id" class="required">Catégorie</label>
-                            <select id="category_id" name="category_id" class="form-control" required>
+                            <select id="category_id" name="category_id" class="form-control" required style="display: block; width: 100%;">
                                 <option value="">Sélectionnez une catégorie</option>
                                 <optgroup label="Recyclés">
                                     <option value="1">Recyclés - Encre</option>
@@ -139,11 +118,11 @@
                                 </optgroup>
                             </select>
                         </div>
-
+                        
                         <!-- Marque -->
                         <div class="form-group">
                             <label for="brand_id" class="required">Marque</label>
-                            <select id="brand_id" name="brand_id" class="form-control" required>
+                            <select id="brand_id" name="brand_id" class="form-control" required style="display: block; width: 100%;">
                                 <option value="">Sélectionnez une marque</option>
                                 <option value="1">HP</option>
                                 <option value="2">Canon</option>
@@ -224,6 +203,88 @@
                     </div>
                 </div>
 
+                <!-- Attributs du produit -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Attributs du produit</h3>
+                    
+                    <div class="form-grid">
+                        <!-- Couleur -->
+                        <div class="form-group">
+                            <label for="color">Couleur</label>
+                            <select id="color" name="attributes[color]" class="form-control">
+                                <option value="">Sélectionnez une couleur</option>
+                                <optgroup label="Toner/Laser">
+                                    <option value="Noir">Noir</option>
+                                    <option value="Cyan">Cyan</option>
+                                    <option value="Magenta">Magenta</option>
+                                    <option value="Jaune">Jaune</option>
+                                    <option value="Monochrome">Monochrome</option>
+                                </optgroup>
+                                <optgroup label="Jet d'encre">
+                                    <option value="Noir Photo">Noir Photo</option>
+                                    <option value="Noir Mat">Noir Mat</option>
+                                    <option value="Cyan Light">Cyan Light</option>
+                                    <option value="Magenta Light">Magenta Light</option>
+                                    <option value="Rouge">Rouge</option>
+                                    <option value="Vert">Vert</option>
+                                    <option value="Bleu">Bleu</option>
+                                    <option value="Gris">Gris</option>
+                                    <option value="Gris Light">Gris Light</option>
+                                </optgroup>
+                                <optgroup label="Combinaisons">
+                                    <option value="Quadrichromie">Quadrichromie (CMJN)</option>
+                                    <option value="Trichromie">Trichromie (CMJ)</option>
+                                    <option value="Noir + Couleur">Noir + Couleur</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Capacité -->
+                        <div class="form-group">
+                            <label for="capacity">Capacité</label>
+                            <select id="capacity" name="attributes[capacity]" class="form-control">
+                                <option value="">Sélectionnez une capacité</option>
+                                <option value="Standard">Standard</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="Haute capacité">Haute capacité</option>
+                                <option value="Super Haute capacité">Super Haute capacité</option>
+                                <option value="Économique">Économique</option>
+                                <option value="Value Pack">Value Pack</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Rendement -->
+                        <div class="form-group">
+                            <label for="rendement">Rendement (pages)</label>
+                            <input
+                                type="number"
+                                id="rendement"
+                                name="attributes[rendement]"
+                                class="form-control"
+                                min="0"
+                                placeholder="Ex: 1500"
+                            >
+                            <span class="helper-text">Nombre approximatif de pages</span>
+                        </div>
+                        
+                        <!-- Référence OEM -->
+                        <div class="form-group">
+                            <label for="reference_oem">Référence OEM</label>
+                            <input
+                                type="text"
+                                id="reference_oem"
+                                name="attributes[reference_oem]"
+                                class="form-control"
+                                placeholder="Ex: TN-2000"
+                            >
+                            <span class="helper-text">Référence du fabricant d'origine</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Description -->
                 <div class="form-section">
                     <h3 class="form-section-title">Description</h3>
@@ -231,14 +292,15 @@
                     <!-- Description courte -->
                     <div class="form-group">
                         <label for="short_description">Description courte</label>
-                        <input
-                            type="text"
+                        <textarea
                             id="short_description"
                             name="short_description"
                             class="form-control"
-                            maxlength="255"
-                            placeholder="Brève description du produit (max 255 caractères)"
-                        >
+                            rows="3"
+                            maxlength="500"
+                            placeholder="Brève description du produit (max 500 caractères)"
+                        ></textarea>
+                        <span class="helper-text">Cette description apparaît dans les listes de produits et en haut de la page produit</span>
                     </div>
 
                     <!-- Description complète -->
@@ -251,6 +313,7 @@
                             rows="5"
                             placeholder="Description détaillée du produit"
                         ></textarea>
+                        <span class="helper-text">Vous pouvez utiliser du HTML simple pour la mise en forme</span>
                     </div>
                 </div>
 
@@ -264,6 +327,19 @@
                     
                     <button type="button" id="add-specification" class="add-specification">
                         + Ajouter une spécification
+                    </button>
+                </div>
+                
+                <!-- Imprimantes compatibles -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Imprimantes compatibles</h3>
+                    
+                    <div id="compatible-printers-container">
+                        <!-- Les lignes d'imprimantes compatibles seront ajoutées ici dynamiquement -->
+                    </div>
+                    
+                    <button type="button" id="add-compatible-printer" class="add-specification">
+                        + Ajouter un modèle d'imprimante compatible
                     </button>
                 </div>
 
@@ -323,4 +399,5 @@
     <script type="module" src="/static/js/session.js"></script>
     <script type="module" src="/static/js/js_admin/product_editor.js"></script>
     <script type="module" src="/static/js/route-guard.js"></script>
+</body>
 </html>

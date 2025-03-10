@@ -31,9 +31,9 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin:auto;
 }
 
 /* =========================================================================== */
@@ -63,7 +63,41 @@ body {
     height: 60px;
     margin-right: 1rem;
 }
+/* page login */
 
+.main {
+    text-align: center;
+    max-width: 1400px;
+    margin: 0 auto; /* Centre le header lui-même */
+    padding: 20px; /* Ajoute un peu d'espace intérieur */
+    background-color: transparent; /* Fond transparent */
+    display: flex;
+    justify-content: center; /* Centre le contenu horizontalement */
+    align-items: center; /* Centre le contenu verticalement */
+}
+
+.return-button {
+    text-align: center;
+    display: inline-flex; /* Utilise flexbox pour aligner l'icône et le texte */
+    align-items: center; /* Centre verticalement l'icône et le texte */
+    gap: 8px; /* Espacement entre l'icône et le texte */
+    background-color: #0d8a26; /* Couleur de fond du bouton */
+    color: white; /* Couleur du texte */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    padding: 10px 15px; /* Espace intérieur du bouton */
+    border-radius: 5px; /* Coins arrondis */
+    border: none; /* Supprime la bordure par défaut */
+    cursor: pointer; /* Change le curseur en pointeur */
+}
+
+.return-button img {
+    width: 40px; /* Taille de l'icône */
+    height: auto; /* Garde les proportions de l'icône */
+}
+
+.return-button:hover {
+    background-color: #2666a7; /* Changement de couleur au survol */
+}
 /* =========================================================================== */
 /*                            Barre de recherche                               */
 /* =========================================================================== */
@@ -374,7 +408,7 @@ body {
 .summary-row {
     display: flex;
     justify-content: space-between;
-    padding: 0.75rem 0;
+    padding: 1rem 0;
     font-size: 1rem;
 }
 
@@ -384,9 +418,9 @@ body {
 
 .total-row {
     font-weight: bold;
-    font-size: 1.2rem;
-    border-top: 2px solid var(--border-color);
-    margin-top: 0.5rem;
+    font-size: 2rem;
+    border-top: 20px solid var(--border-color);
+    margin-top: 0rem;
     padding-top: 1rem;
 }
 
@@ -395,10 +429,11 @@ body {
 }
 
 #free-shipping-notice {
+    padding: center;
     position: absolute;
-    bottom: -15px;
+    bottom: -19px;
     left: 0;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--success-color);
     font-weight: 500;
 }
@@ -526,7 +561,7 @@ body {
 }
 
 .payment-icons img {
-    height: 25px;
+    height: 70px;
     width: auto;
 }
 

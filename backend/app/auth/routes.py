@@ -222,16 +222,7 @@ def get_profile():
 @jwt_required()
 def update_profile():
     """
-    Met à jour le profil utilisateur
-    
-    Body JSON:
-        firstname (str, optionnel): Nouveau prénom
-        lastname (str, optionnel): Nouveau nom
-        current_password (str, requis pour changer le mot de passe)
-        new_password (str, optionnel): Nouveau mot de passe
-        
-    Returns:
-        Response: Données mises à jour au format JSON
+    Met à jour le profil utilisateur, y compris l'adresse principale.
     """
     try:
         current_user_id = get_jwt_identity()
@@ -247,16 +238,35 @@ def update_profile():
             user.firstname = data['firstname']
         if 'lastname' in data:
             user.lastname = data['lastname']
+        if 'email' in data:
+            user.email = data['email']
+        if 'phone' in data:
+            user.phone = data['phone']
             
-        # Gestion changement mot de passe
-        if 'new_password' in data:
-            if not data.get('current_password'):
-                return jsonify({'error': 'Mot de passe actuel requis'}), 400
-                
-            if not user.check_password(data['current_password']):
-                return jsonify({'error': 'Mot de passe actuel incorrect'}), 401
-                
-            user.set_password(data['new_password'])
+        # Mise à jour de l'adresse principale
+        if 'address' in data:
+            address_data = data['address']
+            if not user.addresses:
+                # Créer une nouvelle adresse si aucune n'existe
+                new_address = Address(
+                    user_id=current_user_id,
+                    firstname=user.firstname,
+                    lastname=user.lastname,
+                    address=address_data.get('street'),
+                    city=address_data.get('city'),
+                    postal_code=address_data.get('zip'),
+                    country=address_data.get('country'),
+                    is_default=True
+                )
+                db.session.add(new_address)
+            else:
+                # Mettre à jour l'adresse principale existante
+                main_address = user.addresses.filter_by(is_default=True).first()
+                if main_address:
+                    main_address.address = address_data.get('street', main_address.address)
+                    main_address.city = address_data.get('city', main_address.city)
+                    main_address.postal_code = address_data.get('zip', main_address.postal_code)
+                    main_address.country = address_data.get('country', main_address.country)
 
         db.session.commit()
 

@@ -33,6 +33,45 @@ def admin_required(f):
             return jsonify({"error": "Accès administrateur requis"}), 403
         return f(*args, **kwargs)
     return decorated_function
+# ============================================================================
+#                   Routes pour recherche des produits
+# ============================================================================
+@products_bp.route('/search', methods=['GET'])
+def search_products():
+    """Recherche de produits avec mots clés"""
+    try:
+        query = request.args.get('q', '')
+        if not query or len(query) < 2:
+            return jsonify({"error": "Requête de recherche trop courte"}), 400
+            
+        # Diviser la requête en mots clés
+        keywords = query.lower().split()
+        
+        # Construction de la requête
+        search_query = Product.query.filter(Product.is_active == True)
+        
+        # Appliquer chaque mot clé
+        for keyword in keywords:
+            search_term = f"%{keyword}%"
+            search_query = search_query.filter(
+                (Product.name.ilike(search_term)) |
+                (Product.sku.ilike(search_term)) |
+                (Product.short_description.ilike(search_term)) |
+                (Product.description.ilike(search_term))
+            )
+        
+        # Limiter les résultats
+        products = search_query.limit(20).all()
+        
+        return jsonify({
+            "results": products_schema.dump(products),
+            "count": len(products),
+            "query": query
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Erreur de recherche: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 # ============================================================================
 #                         Routes pour la gestion des produits
@@ -97,6 +136,86 @@ def get_products():
     except Exception as e:
         current_app.logger.error(f"Erreur lors de la récupération des produits: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+@products_bp.route('/favorites', methods=['GET'])
+@jwt_required()
+def get_favorites():
+    """
+    Récupère les produits favoris de l'utilisateur.
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+        favorites = user.favorites.all()
+        return jsonify([product.to_dict() for product in favorites]), 200
+
+    except Exception as e:
+        logger.error(f"Erreur récupération favoris: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@products_bp.route('/favorites/<int:product_id>', methods=['POST'])
+@jwt_required()
+def add_favorite(product_id):
+    """
+    Ajoute un produit aux favoris de l'utilisateur.
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'error': 'Produit non trouvé'}), 404
+
+        user.favorites.append(product)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Produit ajouté aux favoris',
+            'product': product.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Erreur ajout favori: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@products_bp.route('/favorites/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+def remove_favorite(product_id):
+    """
+    Supprime un produit des favoris de l'utilisateur.
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'error': 'Produit non trouvé'}), 404
+
+        user.favorites.remove(product)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Produit supprimé des favoris',
+            'product': product.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Erreur suppression favori: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @products_bp.route('/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
@@ -125,7 +244,11 @@ def create_product():
     try:
         # Récupération des données
         data = request.json
-        
+        print("Données reçues:", data)  # Log de débogage
+        print("Type de category_id:", type(data.get('category_id')))
+        print("Valeur de category_id:", data.get('category_id'))
+        print("Type de brand_id:", type(data.get('brand_id')))
+        print("Valeur de brand_id:", data.get('brand_id'))
         # Génération du slug
         slug = slugify(data.get('name', ''))
         
@@ -217,10 +340,12 @@ def update_product(product_id):
             product.min_stock_level = data['min_stock_level']
             
         if 'category_id' in data:
-            product.category_id = data['category_id']
+            # Convertir en None si la valeur est None ou null
+            product.category_id = data['category_id'] if data['category_id'] is not None else None
             
         if 'brand_id' in data:
-            product.brand_id = data['brand_id']
+            # Convertir en None si la valeur est None ou null
+            product.brand_id = data['brand_id'] if data['brand_id'] is not None else None
             
         if 'is_active' in data:
             product.is_active = data['is_active']
@@ -268,7 +393,11 @@ def delete_product(product_id):
         
         # Suppression des images
         for image in product.images:
-            delete_product_image(image.url)
+            try:
+                delete_product_image(image.url)
+            except Exception as e:
+                current_app.logger.warning(f"Impossible de supprimer l'image {image.id}: {str(e)}")
+
         
         # Suppression du produit (la cascade supprimera les specs et images)
         db.session.delete(product)
@@ -318,7 +447,7 @@ def upload_product_image(product_id):
             unique_filename = f"{uuid.uuid4().hex}_{filename}"
             
             # Chemin de sauvegarde
-            upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'products')
+            upload_folder = os.path.join(current_app.root_path, 'static', 'images', 'products')
             os.makedirs(upload_folder, exist_ok=True)
             file_path = os.path.join(upload_folder, unique_filename)
             
@@ -326,7 +455,7 @@ def upload_product_image(product_id):
             file.save(file_path)
             
             # URL relative pour la base de données
-            relative_path = f"/static/uploads/products/{unique_filename}"
+            relative_path = f"/static/images/products/{unique_filename}"
             
             # Création de l'entrée dans la base de données
             new_image = ProductImage(
@@ -358,6 +487,7 @@ def upload_product_image(product_id):
         current_app.logger.error(f"Erreur lors de l'ajout d'image au produit {product_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+
 @products_bp.route('/images/<int:image_id>', methods=['DELETE'])
 @jwt_required()
 def delete_image(image_id):
@@ -388,6 +518,48 @@ def delete_image(image_id):
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Erreur lors de la suppression de l'image {image_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+@products_bp.route('/<int:product_id>/images/<int:image_id>/primary', methods=['PUT'])
+@jwt_required()
+def set_primary_image(product_id, image_id):
+    """Définit une image comme image principale d'un produit."""
+    try:
+        # Vérification des permissions admin
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user or not user.is_admin:
+            return jsonify({"error": "Accès non autorisé"}), 403
+        
+        # Vérification du produit
+        product = Product.query.get_or_404(product_id)
+        
+        # Vérification de l'image
+        image = ProductImage.query.get_or_404(image_id)
+        
+        # Vérifier que l'image appartient bien au produit
+        if image.product_id != product_id:
+            return jsonify({"error": "Cette image n'appartient pas au produit spécifié"}), 400
+        
+        # Mettre à jour toutes les images du produit
+        for img in product.images:
+            img.is_primary = (img.id == image_id)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "message": "Image principale définie avec succès",
+            "image": {
+                "id": image.id,
+                "url": image.url,
+                "alt": image.alt,
+                "is_primary": True
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Erreur lors de la définition de l'image principale: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 # ============================================================================
@@ -487,3 +659,7 @@ def create_brand():
         db.session.rollback()
         current_app.logger.error(f"Erreur lors de la création de la marque: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@products_bp.route('/test', methods=['GET'])
+def test_route():
+    return jsonify({"message": "API est fonctionnelle"}), 200

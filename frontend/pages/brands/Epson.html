@@ -7,13 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="FMP, votre spécialiste en cartouches d'imprimantes. Large gamme de cartouches compatibles et originales pour toutes les marques.">
-    <title>FMP - For My Printer | Cartouches d'imprimantes</title>
+    <title>FMP - Produits par marque | Cartouches d'imprimantes</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/icones/favicon.ico">
 
     <!-- =================================================================== -->
     <!-- Sécurité -->
     <!-- =================================================================== -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- CSP modifié pour permettre les modules et les scripts inline nécessaires -->
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' http://localhost:5000;
                 script-src 'self' 'unsafe-inline' 'unsafe-eval';
@@ -24,6 +24,7 @@
     <!-- Styles -->
     <!-- =================================================================== -->
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/marque.css">
     <link rel="stylesheet" href="/static/css/home.css">
 
     <!-- =================================================================== -->
@@ -33,7 +34,6 @@
     <script type="module" src="/static/js/session.js"></script>
     <script type="module" src="/static/js/auth.js"></script>
     <script type="module" src="/static/js/main.js"></script>
-    <script src="/static/js/home.js"></script>
 </head>
 <body>
     <!-- =================================================================== -->
@@ -46,53 +46,40 @@
                 <!-- Navigation principale -->
                 <nav class="main-nav">
                     <div class="container">
-                        <!-- Logo -->
-                        <div class="logo">
-                            <a href="/">
-                                <img src="/static/images/banners/logo_FMP.jpg" alt="FMP Logo">
+                        <!-- Logo et retour accueil -->
+                        <div class="logo-container">
+                            <a href="/" class="return-button">
+                                <img src="/static/images/icones/accueil.png" alt="Accueil-icone">
+                                <span>Retour à l'accueil</span>
                             </a>
                         </div>
 
-                        <!-- Barre de recherche -->
-                        <div class="search-bar">
-                            <form id="search-form">
-                                <input type="text"
-                                    id="search-input"
-                                    name="q"
-                                    placeholder="Rechercher une cartouche..."
-                                    autocomplete="off">
-                                <button type="submit">
-                                    <img src="/static/images/icones/chercher.png" alt="Rechercher">
+                        <!-- User Navigation -->
+                        <!-- Liens de connexion et d'inscription (visibles uniquement si l'utilisateur n'est pas connecté) -->
+                        <div id="auth-container">
+                            <a href="/login" id="login-link" class="auth-link">
+                                Connexion
+                            </a>
+                            <a href="/register" id="register-link" class="auth-link">
+                                Inscription
+                            </a>
+                        </div>
+
+                        <!-- Menu utilisateur (visible uniquement si l'utilisateur est connecté) -->
+                        <div id="user-nav" class="user-nav" style="display: none;">
+                            <a href="/pages/profile.html">
+                                <button id="profile-button" class="nav-button">
+                                    <img src="/static/images/icones/user.png" class="user-icon">
+                                    <div class="profile-text">
+                                        <span class="profile-label">Mon Compte</span>
+                                        <span class="username">Nom d'utilisateur</span>
+                                    </div>
                                 </button>
-                            </form>
+                            </a>
+                            <button id="logout-button" class="nav-button" onclick="mainManager.handleLogout()">
+                                Déconnexion
+                            </button>
                         </div>
-
-                            <!-- User Navigation -->
-                <!-- Liens de connexion et d'inscription (visibles uniquement si l'utilisateur n'est pas connecté) -->
-                <div id="auth-container">
-                    <a href="/login" id="login-link" class="auth-link">
-                        Connexion
-                    </a>
-                    <a href="/register" id="register-link" class="auth-link">
-                        Inscription
-                    </a>
-                </div>
-
-                <!-- Menu utilisateur (visible uniquement si l'utilisateur est connecté) -->
-                <div id="user-nav" class="user-nav" style="display: none;">
-                    <a href="/pages/profile.html">
-                    <button id="profile-button" class="nav-button">
-                        <img src="/static/images/icones/user.png" class="user-icon">
-                        <div class="profile-text">
-                            <span class="profile-label">Mon Compte</span>
-                            <span class="username">Nom d'utilisateur</span>
-                        </div>
-                    </button>
-                    </a>
-                    <button id="logout-button" class="nav-button" onclick="mainManager.handleLogout()">
-                        Déconnexion
-                    </button>
-                </div>
 
                         <!-- Panier -->
                         <div class="cart-widget">
@@ -107,3 +94,194 @@
             </div>
         </div>
     </header>
+    
+    <main class="marque-page">
+        <!-- Titre de la page -->
+        <div class="marque-header">
+            <h1>Tous nos produits</h1>
+            <img id="marque-logo" src="/static/images/logos_marque/epson.webp" alt="Logo Brother">
+            
+            <!-- Barre de recherche spécifique sous le logo -->
+            <div class="marque-search">
+                <form id="marque-search-form">
+                    <input type="text"
+                        id="marque-search-input"
+                        name="q"
+                        placeholder="Rechercher dans les produits Brother..."
+                        autocomplete="off">
+                    <button type="submit">
+                        <img src="/static/images/icones/chercher.png" alt="Rechercher">
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <section class="filters-section">
+            <div class="filters-container">
+                <button class="filter-button active" data-category="all">Tous les produits</button>
+                <button class="filter-button" data-category="jet-d-encre">Jet d'encre</button>
+                <button class="filter-button" data-category="laser-toner">Laser/Toner</button>
+                <button class="filter-button" data-category="remanufactured">Remanufacturé</button>
+                <button class="filter-button" data-category="original">Original</button>
+                <button class="filter-button" data-category="compatible">Compatible</button>
+            </div>
+        </section>
+
+        <!-- Slider de présentation avec cases vides -->
+        <section class="product-slider">
+            <div class="slider-container">
+                <div class="slider-track" id="slider-track">
+                    <!-- Cases vides dans le slider -->
+                    <div class="slider-item empty-slot">
+                        <div class="empty-slot-inner">
+                            <div class="empty-slot-icon">+</div>
+                        </div>
+                    </div>
+                    <div class="slider-item empty-slot">
+                        <div class="empty-slot-inner">
+                            <div class="empty-slot-icon">+</div>
+                        </div>
+                    </div>
+                    <div class="slider-item empty-slot">
+                        <div class="empty-slot-inner">
+                            <div class="empty-slot-icon">+</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-nav slider-prev" aria-label="Précédent">&#10094;</button>
+                <button class="slider-nav slider-next" aria-label="Suivant">&#10095;</button>
+            </div>
+        </section>
+
+        <!-- Liste des produits avec cases vides -->
+        <section class="product-list">
+            <h2 class="section-title">Notre sélection de cartouches Brother</h2>
+            <div class="product-grid" id="product-grid">
+                <!-- Cases vides pour les produits à charger depuis la DB -->
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+                
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+                
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+                
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+                
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+                
+                <div class="product-card empty-product">
+                    <div class="empty-product-inner">
+                        <div class="empty-product-icon">+</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn next">Suivant &raquo;</button>
+            </div>
+        </section>
+    </main>
+
+        <!-- Pied de page -->
+        <footer class="main-footer">
+            <div class="container">
+                                <!-- À propos -->
+                                <div class="footer-section-title">
+                                    <h3>À Propos de FMP Votre spécialiste en cartouches d'imprimantes depuis 2024.</h3>
+                                </div>
+                                
+                <div class="footer-grid">
+                    <!-- Navigation -->
+                    <div class="footer-section">
+                        <h3>Navigation</h3>
+                        <ul>
+                            <li><a href="/products" data-path="products">Tous nos produits</a></li>
+                            <li><a href="/brands" data-path="brands">Nos marques</a></li>
+                            <li><a href="/about" data-path="about">À propos</a></li>
+                        </ul>
+                    </div>
+    
+                    <!-- Informations -->
+                    <div class="footer-section">
+                        <h3>Informations</h3>
+                        <ul>
+                            <li><a href="/Shipping" data-path="shipping">Livraison</a></li>
+                            <li><a href="/returns" data-path="returns">Retours</a></li>
+                            <li><a href="/faq" data-path="faq">FAQ</a></li>
+                            <li><a href="/terms" data-path="terms">CGV</a></li>
+                        </ul>
+                    </div>
+    
+                    <!-- Contact -->
+                    <div class="footer-section">
+                        <h3>Contact</h3>
+                        <address class="contact-info">
+                            <p>
+                                <i class="icon map-icon"></i>
+                                Rue aux Mesles
+                                53000 Laval, France
+                            </p>
+                            <p>
+                                <i class="icon phone-icon"></i>
+                                06 06 77 44 39
+                            </p>
+                            <p>
+                                <i class="icon mail-icon"></i>
+                                contact@fmp.com
+                            </p>
+                        </address>
+                    </div>
+                    <div class="footer-section-links">
+                        <div class="social-links">
+                            <!-- Lien Facebook -->
+                            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                                <img src="/static/images/icones/facebook.png" alt="Facebook">
+                            </a>
+                            <!-- Lien Twitter -->
+                            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+                                <img src="/static/images/icones/twitter.png" alt="Twitter">
+                            </a>
+                            <!-- Lien Instagram -->
+                            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                                <img src="/static/images/icones/instagram.png" alt="Instagram">
+                            </a>
+                        </div>
+                        </div>
+                </div>
+    
+                <!-- Copyright -->
+                <div class="footer-bottom">
+                    <p>&copy; 2025 FMP - For My Printer. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+    <!-- =================================================================== -->
+    <!-- Scripts spécifiques à la page -->
+    <!-- =================================================================== -->
+    <script src="/static/js/marque.js"></script>
+</body>
+</html>

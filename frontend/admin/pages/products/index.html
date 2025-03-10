@@ -6,26 +6,6 @@
     <title>Gestion des Produits - FMP Admin</title>
     <link rel="stylesheet" href="/static/css/css_admin/admin.css">
     <link rel="stylesheet" href="/static/css/css_admin/products.css">
-    <script type="module">
-        import { session } from '/static/js/session.js';
-        
-        // Vérification au chargement de la page
-        document.addEventListener('DOMContentLoaded', () => {
-            // Vérification du statut admin
-            const userData = session.getUserData();
-            console.log("Données utilisateur:", userData);
-            
-            if (!session.isAuthenticated()) {
-                window.location.href = '/pages/login.html?redirect=' + encodeURIComponent(window.location.pathname);
-                return;
-            }
-            
-            if (!userData?.is_admin) {
-                window.location.href = '/pages/login.html?message=admin_required';
-                return;
-            }
-        });
-    </script>
 </head>
 
 <body>
@@ -60,7 +40,7 @@
                 <img src="/static/images/icones/user3.png" alt="Utilisateurs">
                 <span>Utilisateurs</span>
             </a>
-            <a href="/logout" class="nav-link" id="logout-link">
+            <a href="#" id="logout-btn" class="nav-link">
                 <img src="/static/images/icones/logout.png" alt="Déconnexion">
                 <span>Déconnexion</span>
             </a>
@@ -92,32 +72,13 @@
                     <div class="filter-group">
                         <select id="category-filter" class="filter-select">
                             <option value="">Toutes les catégories</option>
-                            <optgroup label="Recyclés">
-                                <option value="recycled-ink">Recyclés - Encre</option>
-                                <option value="recycled-toner">Recyclés - Toner</option>
-                            </optgroup>
-                            <optgroup label="Originaux">
-                                <option value="original-ink">Origines - Encre</option>
-                                <option value="original-toner">Origines - Toner</option>
-                            </optgroup>
-                            <optgroup label="Compatibles">
-                                <option value="compatible-ink">Compatibles - Encre</option>
-                                <option value="compatible-toner">Compatibles - Toner</option>
-                            </optgroup>
+                            <!-- Les catégories seront chargées dynamiquement -->
                         </select>
                     </div>
                     <div class="filter-group">
                         <select id="brand-filter" class="filter-select">
                             <option value="">Toutes les marques</option>
-                            <option value="hp">HP</option>
-                            <option value="canon">Canon</option>
-                            <option value="epson">Epson</option>
-                            <option value="brother">Brother</option>
-                            <option value="lexmark">Lexmark</option>
-                            <option value="samsung">Samsung</option>
-                            <option value="kyocera">Kyocera</option>
-                            <option value="xerox">Xerox</option>
-                            <option value="ricoh">Ricoh</option>
+                            <!-- Les marques seront chargées dynamiquement -->
                         </select>
                     </div>
                     <div class="filter-group">
@@ -157,7 +118,7 @@
         <section class="results-section">
             <div class="results-header">
                 <div class="results-count">
-                    <span id="results-count">48</span> produits trouvés
+                    <span id="results-count">0</span> produits trouvés
                 </div>
                 <div class="results-actions">
                     <select id="sort-select" class="filter-select">
@@ -192,143 +153,21 @@
                             </th>
                             <th class="image-column">Image</th>
                             <th class="name-column">Produit</th>
-                            <th>SKU</th>
-                            <th>Catégorie</th>
-                            <th>Marque</th>
-                            <th>Prix</th>
-                            <th>Stock</th>
-                            <th>Statut</th>
+                            <th class="sku-column">SKU</th>
+                            <th class="category-column">Catégorie</th>
+                            <th class="brand-column">Marque</th>
+                            <th class="price-column">Prix</th>
+                            <th class="stock-column">Stock</th>
+                            <th class="status-column">Statut</th>
                             <th class="actions-column">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="products-table-body">
-                        <!-- Exemple de ligne de produit -->
-                        <tr>
-                            <td>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" class="product-checkbox" value="1">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </td>
-                            <td class="image-cell">
-                                <div class="product-thumbnail">
-                                    <img src="/static/images/products/hp-305xl-black.jpg" alt="Cartouche HP 305XL Noir">
-                                </div>
-                            </td>
-                            <td class="name-cell">
-                                <div class="product-name">Cartouche HP 305XL Noir</div>
-                            </td>
-                            <td>HP305XL-BK</td>
-                            <td>Originaux - Encre</td>
-                            <td>HP</td>
-                            <td>19,95 €</td>
-                            <td class="stock-cell">
-                                <span class="stock-badge in-stock">12</span>
-                            </td>
-                            <td>
-                                <span class="status-badge active">Actif</span>
-                            </td>
-                            <td class="actions-cell">
-                                <div class="actions-dropdown">
-                                    <button class="btn-actions">Actions</button>
-                                    <div class="dropdown-content">
-                                        <a href="/admin/pages/products/edit.html?id=1" class="dropdown-item">
-                                            <span class="icon-edit"></span> Modifier
-                                        </a>
-                                        <a href="#" class="dropdown-item duplicate-product" data-id="1">
-                                            <span class="icon-duplicate"></span> Dupliquer
-                                        </a>
-                                        <a href="#" class="dropdown-item delete-product" data-id="1">
-                                            <span class="icon-delete"></span> Supprimer
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- Autre exemple de ligne de produit -->
-                        <tr>
-                            <td>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" class="product-checkbox" value="2">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </td>
-                            <td class="image-cell">
-                                <div class="product-thumbnail">
-                                    <img src="/static/images/products/canon-pg545xl.jpg" alt="Cartouche Canon PG-545XL">
-                                </div>
-                            </td>
-                            <td class="name-cell">
-                                <div class="product-name">Cartouche Canon PG-545XL Noir</div>
-                            </td>
-                            <td>CAN-PG545XL</td>
-                            <td>Originaux - Encre</td>
-                            <td>Canon</td>
-                            <td>17,95 €</td>
-                            <td class="stock-cell">
-                                <span class="stock-badge low-stock">3</span>
-                            </td>
-                            <td>
-                                <span class="status-badge active">Actif</span>
-                            </td>
-                            <td class="actions-cell">
-                                <div class="actions-dropdown">
-                                    <button class="btn-actions">Actions</button>
-                                    <div class="dropdown-content">
-                                        <a href="/admin/pages/products/edit.html?id=2" class="dropdown-item">
-                                            <span class="icon-edit"></span> Modifier
-                                        </a>
-                                        <a href="#" class="dropdown-item duplicate-product" data-id="2">
-                                            <span class="icon-duplicate"></span> Dupliquer
-                                        </a>
-                                        <a href="#" class="dropdown-item delete-product" data-id="2">
-                                            <span class="icon-delete"></span> Supprimer
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <!-- Autre exemple avec stock épuisé -->
-                        <tr>
-                            <td>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" class="product-checkbox" value="3">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </td>
-                            <td class="image-cell">
-                                <div class="product-thumbnail">
-                                    <img src="/static/images/products/hp-305-color.jpg" alt="Cartouche HP 305 Couleur">
-                                </div>
-                            </td>
-                            <td class="name-cell">
-                                <div class="product-name">Cartouche HP 305 Couleur</div>
-                            </td>
-                            <td>HP305-COL</td>
-                            <td>Originaux - Encre</td>
-                            <td>HP</td>
-                            <td>16,95 €</td>
-                            <td class="stock-cell">
-                                <span class="stock-badge out-of-stock">0</span>
-                            </td>
-                            <td>
-                                <span class="status-badge inactive">Inactif</span>
-                            </td>
-                            <td class="actions-cell">
-                                <div class="actions-dropdown">
-                                    <button class="btn-actions">Actions</button>
-                                    <div class="dropdown-content">
-                                        <a href="/admin/pages/products/edit.html?id=3" class="dropdown-item">
-                                            <span class="icon-edit"></span> Modifier
-                                        </a>
-                                        <a href="#" class="dropdown-item duplicate-product" data-id="3">
-                                            <span class="icon-duplicate"></span> Dupliquer
-                                        </a>
-                                        <a href="#" class="dropdown-item delete-product" data-id="3">
-                                            <span class="icon-delete"></span> Supprimer
-                                        </a>
-                                    </div>
-                                </div>
+                        <!-- Les produits seront chargés dynamiquement ici -->
+                        <tr id="loading-row">
+                            <td colspan="10" class="loading-cell">
+                                <div class="loading-spinner"></div>
+                                <p>Chargement des produits...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -352,20 +191,8 @@
             </div>
 
             <!-- Pagination -->
-            <div class="pagination">
-                <button class="btn-pagination" disabled>
-                    <span class="icon-chevron-left"></span>
-                </button>
-                <button class="btn-pagination active">1</button>
-                <button class="btn-pagination">2</button>
-                <button class="btn-pagination">3</button>
-                <button class="btn-pagination">4</button>
-                <button class="btn-pagination">5</button>
-                <span class="pagination-ellipsis">...</span>
-                <button class="btn-pagination">10</button>
-                <button class="btn-pagination">
-                    <span class="icon-chevron-right"></span>
-                </button>
+            <div class="pagination" id="pagination-container">
+                <!-- La pagination sera générée dynamiquement -->
             </div>
         </section>
     </main>

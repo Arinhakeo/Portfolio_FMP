@@ -43,91 +43,45 @@
     </script>
 </head>
     <!-- Bannière en haut -->
-    <header class="admin-banner">
-        <a href=" / " class="banner-button">
-        <div class="banner-logo">
-            <img src="/static/images/icones/admin.png" alt="FMP Logo">
+    <header class="admin-header">
+        <div class="header-logo">
+            <img src="/static/images/icones/admin.png" alt="Logo FMP Admin">
             <h1>FMP Admin</h1>
         </div>
-        </a>
-        <div class="banner-actions">
-            <a href="/admin/dashboard.html" class="banner-button">
+        <nav class="header-nav">
+            <a href="/admin/dashboard.html" class="nav-link active">
                 <img src="/static/images/icones/laptop.png" alt="Dashboard">
                 <span>Tableau de bord</span>
             </a>
-            <a href="/admin/pages/products/index.html" class="banner-button">
+            <a href="/admin/pages/products/index.html" class="nav-link">
                 <img src="/static/images/icones/products.png" alt="Produits">
                 <span>Produits</span>
             </a>
-            <a href="/admin/pages/categories/index.html" class="banner-button">
+            <a href="/admin/pages/categories/index.html" class="nav-link">
                 <img src="/static/images/icones/categories.png" alt="Catégories">
                 <span>Catégories</span>
             </a>
-            <a href="/admin/pages/brands/index.html" class="banner-button">
+            <a href="/admin/pages/brands/index.html" class="nav-link">
                 <img src="/static/images/icones/brands.png" alt="Marques">
                 <span>Marques</span>
             </a>
-            <a href="/admin/pages/users/index.html" class="banner-button">
+            <a href="/admin/pages/orders/index.html" class="nav-link">
+                <img src="/static/images/icones/caddie2.png" alt="Commandes">
+                <span>Commandes</span>
+            </a>
+            <a href="/admin/pages/users/index.html" class="nav-link">
                 <img src="/static/images/icones/user3.png" alt="Utilisateurs">
                 <span>Utilisateurs</span>
             </a>
-            <a href="/index.html" class="banner-button">
+            <a href="#" id="logout-btn" class="nav-link">
                 <img src="/static/images/icones/logout.png" alt="Déconnexion">
                 <span>Déconnexion</span>
             </a>
-        </div>
+        </nav>
     </header>
 <body>
-    <!-- Menu latéral admin -->
-    <aside class="admin-sidebar">
-        <div class="admin-brand">
-            <h1>FMP Admin</h1>
-        </div>
-        <nav class="admin-nav">
-            <ul>
-                <li>
-                    <a href="../dashboard.html">
-                        <i class="icon dashboard-icon"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="../products/index.html">
-                        <i class="icon products-icon"></i>
-                        Produits
-                    </a>
-                </li>
-                <li>
-                    <a href="../categories/index.html">
-                        <i class="icon categories-icon"></i>
-                        Catégories
-                    </a>
-                </li>
-                <li>
-                    <a href="../brands/index.html">
-                        <i class="icon brands-icon"></i>
-                        Marques
-                    </a>
-                </li>
-                <li>
-                    <a href="./index.html" class="active">
-                        <i class="icon orders-icon"></i>
-                        Commandes
-                    </a>
-                </li>
-                <li>
-                    <a href="../users/index.html">
-                        <i class="icon users-icon"></i>
-                        Utilisateurs
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-
     <!-- Contenu principal -->
     <main class="admin-main">
-        <header class="admin-header">
             <h2>Gestion des Commandes</h2>
             <div class="filters">
                 <select id="status-filter">
@@ -141,8 +95,7 @@
                 <input
                     type="text"
                     id="search-order"
-                    placeholder="Rechercher une commande..."
-                >
+                    placeholder="Rechercher une commande...">
             </div>
         </header>
 
