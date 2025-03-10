@@ -1,5 +1,3 @@
-Bien sûr, je comprends que vous voulez faciliter le lancement de votre projet pour votre professeur ou d'autres testeurs. Voici un guide détaillé que vous pouvez inclure dans votre README.md ou dans un fichier INSTRUCTIONS.md à la racine de votre projet :
-
 ## Guide de lancement du projet Portfolio_FMP
 
 Ce guide vous aidera à configurer et lancer le projet Portfolio_FMP sur votre machine locale.
